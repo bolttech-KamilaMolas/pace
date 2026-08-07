@@ -4653,7 +4653,45 @@ function renderSettings() {
     html += `</div></div>`;
     html += `<div class="settings-panel" data-panel="import" style="display:none;">`;
     html += `<div class="settings-section">`;
-    html += `<h4 style="font-size:13px;font-weight:600;margin-bottom:12px;">Import danych z Excel</h4>`;
+    
+    // === JIRA Import Section ===
+    html += `<h4 style="font-size:13px;font-weight:600;margin-bottom:12px;">📋 Import z Jiry (LSG)</h4>`;
+    html += `<div class="settings-info" style="background:var(--bt-grey-50);padding:12px;border-radius:4px;margin-bottom:12px;border-left:4px solid var(--bt-cyan);">`;
+    html += `<p style="font-size:12px;color:var(--bt-grey-600);margin-bottom:8px;">Importuj zadania z Jiry LSG do alokacji zespołów. Obsługiwane pola:</p>`;
+    html += `<ul style="font-size:11px;color:var(--bt-grey-600);margin-left:20px;list-style:disc;">`;
+    html += `<li><code style="background:white;padding:2px 4px;">Original Estimate</code> (dev) → Man-Days</li>`;
+    html += `<li><code style="background:white;padding:2px 4px;">Test Estimate (QA)</code> → Man-Days</li>`;
+    html += `<li><code style="background:white;padding:2px 4px;">Assignee</code> → Osoba + Zespół</li>`;
+    html += `<li><code style="background:white;padding:2px 4px;">Status</code> → Scope Planner</li>`;
+    html += `</ul>`;
+    html += `</div>`;
+    
+    html += `<div style="background:var(--bt-white);border:1px solid var(--bt-grey-200);border-radius:4px;padding:12px;margin-bottom:12px;">`;
+    html += `<div style="margin-bottom:12px;">`;
+    html += `<label style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;">`;
+    html += `<span style="font-size:11px;font-weight:600;color:var(--bt-navy);">Backend URL</span>`;
+    html += `<input type="text" id="jira-backend-url" class="inline-edit" placeholder="http://localhost:5000" style="font-size:12px;" value="http://localhost:5000" />`;
+    html += `</label>`;
+    html += `<label style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;">`;
+    html += `<span style="font-size:11px;font-weight:600;color:var(--bt-navy);">Projekt Jiry</span>`;
+    html += `<input type="text" id="jira-project" class="inline-edit" placeholder="np. LSG" style="font-size:12px;" value="LSG" />`;
+    html += `</label>`;
+    html += `<label style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;">`;
+    html += `<span style="font-size:11px;font-weight:600;color:var(--bt-navy);">JQL Query (opcjonalnie)</span>`;
+    html += `<textarea id="jira-jql" class="inline-edit" placeholder="np. project=LSG AND assignee=currentUser()" style="font-size:11px;padding:8px;border:1px solid var(--bt-grey-200);border-radius:3px;min-height:50px;resize:vertical;width:100%;"></textarea>`;
+    html += `</label>`;
+    html += `</div>`;
+    html += `<div style="display:flex;gap:8px;margin-bottom:12px;">`;
+    html += `<button class="edit-btn" id="jira-test-connection" style="padding:8px 12px;font-size:11px;flex:1;">🔗 Test połączenia</button>`;
+    html += `<button class="edit-btn" id="jira-fetch-preview" style="padding:8px 12px;font-size:11px;flex:1;background:var(--bt-cyan);color:white;">👁️ Podgląd</button>`;
+    html += `</div>`;
+    html += `<div id="jira-preview-container" style="margin-bottom:12px;display:none;"></div>`;
+    html += `<button class="edit-btn" id="jira-import-confirm" style="padding:8px 12px;font-size:11px;width:100%;background:var(--accent-green);color:white;display:none;">✓ Potwierdź import</button>`;
+    html += `<div id="jira-status-message" style="font-size:11px;color:var(--bt-grey-600);margin-top:8px;"></div>`;
+    html += `</div>`;
+    
+    // === Excel Import Section (legacy) ===
+    html += `<h4 style="font-size:13px;font-weight:600;margin-top:24px;margin-bottom:12px;">📊 Import z Excel (legacy)</h4>`;
     html += `<div class="settings-info">`;
     html += `<p style="font-size:12px;color:var(--bt-grey-600);">Źródło: <code style="font-size:11px;background:var(--bt-grey-100);padding:2px 6px;border-radius:3px;">capacity.xlsx</code> (GitHub Pages)</p>`;
     html += `<p style="font-size:12px;color:var(--bt-grey-600);">Załadowane osoby: <strong>${Object.keys(excelAvailability).length}</strong> | Tygodnie: <strong>${excelWeekDates.length}</strong></p>`;
@@ -5104,6 +5142,229 @@ function renderSettings() {
             }
         });
     });
+
+    // ===== JIRA IMPORT HANDLERS =====
+    let jiraPreviewData = null;
+    
+    // Test Jira connection
+    const testConnBtn = container.querySelector('#jira-test-connection');
+    if (testConnBtn) {
+        testConnBtn.addEventListener('click', async () => {
+            const btn = container.querySelector('#jira-test-connection');
+            const statusDiv = container.querySelector('#jira-status-message');
+            const backendUrl = container.querySelector('#jira-backend-url').value.trim();
+            
+            btn.textContent = '⏳ Testuję...';
+            btn.disabled = true;
+            statusDiv.textContent = '';
+            
+            try {
+                const resp = await fetch(`${backendUrl}/api/test-jira-connection`);
+                const result = await resp.json();
+                if (result.success) {
+                    statusDiv.style.color = 'var(--accent-green)';
+                    statusDiv.textContent = `✓ ${result.message}`;
+                } else {
+                    statusDiv.style.color = 'var(--accent-red)';
+                    statusDiv.textContent = `✗ Błąd: ${result.message}`;
+                }
+            } catch (err) {
+                statusDiv.style.color = 'var(--accent-red)';
+                statusDiv.textContent = `✗ Błąd połączenia: ${err.message}`;
+            } finally {
+                btn.textContent = '🔗 Test połączenia';
+                btn.disabled = false;
+            }
+        });
+    }
+    
+    // Fetch Jira preview
+    const fetchPreviewBtn = container.querySelector('#jira-fetch-preview');
+    if (fetchPreviewBtn) {
+        fetchPreviewBtn.addEventListener('click', async () => {
+            const btn = container.querySelector('#jira-fetch-preview');
+            const previewDiv = container.querySelector('#jira-preview-container');
+            const statusDiv = container.querySelector('#jira-status-message');
+            const project = container.querySelector('#jira-project').value.trim();
+            const jql = container.querySelector('#jira-jql').value.trim();
+            const backendUrl = container.querySelector('#jira-backend-url').value.trim();
+            
+            btn.textContent = '⏳ Pobbieram...';
+            btn.disabled = true;
+            statusDiv.textContent = '';
+            previewDiv.style.display = 'none';
+            previewDiv.innerHTML = '';
+            
+            try {
+                const payload = {
+                    project: project || 'LSG',
+                    jql: jql || `project=${project || 'LSG'}`,
+                    fields: ['key', 'summary', 'assignee', 'status', 'timeoriginalestimate', 'cf[10695]', 'customfield_10270']
+                };
+                
+                const resp = await fetch(`${backendUrl}/api/jira/import`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await resp.json();
+                
+                if (result.success && result.issues && result.issues.length > 0) {
+                    jiraPreviewData = result;
+                    
+                    // Render preview table
+                    let html = `<div style="border:1px solid var(--bt-grey-200);border-radius:4px;overflow:auto;max-height:300px;margin-bottom:12px;">`;
+                    html += `<table style="width:100%;border-collapse:collapse;font-size:11px;">`;
+                    html += `<thead style="background:var(--bt-navy);color:white;position:sticky;top:0;">`;
+                    html += `<tr>`;
+                    html += `<th style="padding:8px;text-align:left;border-right:1px solid var(--bt-grey-300);">Key</th>`;
+                    html += `<th style="padding:8px;text-align:left;border-right:1px solid var(--bt-grey-300);">Osoba</th>`;
+                    html += `<th style="padding:8px;text-align:center;border-right:1px solid var(--bt-grey-300);">Dev MD</th>`;
+                    html += `<th style="padding:8px;text-align:center;border-right:1px solid var(--bt-grey-300);">QA MD</th>`;
+                    html += `<th style="padding:8px;text-align:left;">Status</th>`;
+                    html += `</tr>`;
+                    html += `</thead>`;
+                    html += `<tbody>`;
+                    
+                    result.issues.forEach((issue, idx) => {
+                        const bgColor = idx % 2 === 0 ? 'white' : 'var(--bt-grey-50)';
+                        html += `<tr style="background:${bgColor};border-bottom:1px solid var(--bt-grey-200);">`;
+                        html += `<td style="padding:8px;border-right:1px solid var(--bt-grey-300);font-weight:600;color:var(--bt-cyan);">${issue.key}</td>`;
+                        html += `<td style="padding:8px;border-right:1px solid var(--bt-grey-300);">${issue.assignee || '—'}</td>`;
+                        html += `<td style="padding:8px;text-align:center;border-right:1px solid var(--bt-grey-300);">${issue.dev_estimate_md || '—'}</td>`;
+                        html += `<td style="padding:8px;text-align:center;border-right:1px solid var(--bt-grey-300);">${issue.qa_estimate_md || '—'}</td>`;
+                        html += `<td style="padding:8px;">${issue.status || '—'}</td>`;
+                        html += `</tr>`;
+                    });
+                    
+                    html += `</tbody></table></div>`;
+                    previewDiv.innerHTML = html;
+                    previewDiv.style.display = 'block';
+                    
+                    statusDiv.style.color = 'var(--accent-green)';
+                    statusDiv.textContent = `✓ Znaleziono ${result.issues.length} zadań. Kliknij "Potwierdź import" aby dodać do alokacji.`;
+                    
+                    // Show import button
+                    container.querySelector('#jira-import-confirm').style.display = 'block';
+                } else {
+                    statusDiv.style.color = 'var(--accent-red)';
+                    statusDiv.textContent = `✗ ${result.message || 'Brak zadań lub błąd importu'}`;
+                }
+            } catch (err) {
+                statusDiv.style.color = 'var(--accent-red)';
+                statusDiv.textContent = `✗ Błąd: ${err.message}`;
+            } finally {
+                btn.textContent = '👁️ Podgląd';
+                btn.disabled = false;
+            }
+        });
+    }
+    
+    // Confirm Jira import
+    const confirmBtn = container.querySelector('#jira-import-confirm');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', async () => {
+            if (!jiraPreviewData || !jiraPreviewData.issues) {
+                alert('Brak danych do importu. Kliknij "Podgląd" najpierw.');
+                return;
+            }
+            
+            const btn = container.querySelector('#jira-import-confirm');
+            const statusDiv = container.querySelector('#jira-status-message');
+            
+            btn.textContent = '⏳ Importuję...';
+            btn.disabled = true;
+            
+            try {
+                // Merge Jira issues into PROJECTS
+                let addedCount = 0;
+                
+                jiraPreviewData.issues.forEach(issue => {
+                    // Find or create project for this issue
+                    let project = PROJECTS.find(p => p.name === issue.key);
+                    
+                    if (!project) {
+                        project = {
+                            id: `jira-${issue.key}`,
+                            name: issue.key,
+                            category: 'backlog',
+                            responsible: issue.assignee || '—',
+                            shortName: issue.key,
+                            status: 'not_started',
+                            health: 'green',
+                            budget: 100,
+                            spent: 0,
+                            description: issue.summary || '',
+                            notes: [],
+                            risks: [],
+                            allocations: {},
+                            jira_key: issue.key,
+                            jira_status: issue.status
+                        };
+                        PROJECTS.push(project);
+                        addedCount++;
+                    }
+                    
+                    // Add allocations if person exists (or create with default team)
+                    if (issue.assignee) {
+                        let person = PEOPLE.find(p => p.name === issue.assignee);
+                        
+                        // If person doesn't exist, create with default team (ALF)
+                        if (!person) {
+                            person = {
+                                name: issue.assignee,
+                                role: 'Developer',
+                                team: 'ALF',  // Default team for imported people
+                                projects: [],
+                                employmentType: 'full-time',
+                                availability: 100,
+                                assignedTeams: []
+                            };
+                            PEOPLE.push(person);
+                        }
+                        
+                        const sprint = getNextSprint();
+                        if (sprint && sprint.id) {
+                            if (!project.allocations[sprint.id]) {
+                                project.allocations[sprint.id] = {};
+                            }
+                            project.allocations[sprint.id][person.name] = {
+                                dev_md: issue.dev_estimate_md || 0,
+                                qa_md: issue.qa_estimate_md || 0,
+                                notes: `Jira: ${issue.key}`
+                            };
+                        }
+                    }
+                });
+                
+                saveProjects();
+                savePeople();  // Save newly created people from Jira import
+                saveAllocations();
+                
+                statusDiv.style.color = 'var(--accent-green)';
+                statusDiv.textContent = `✓ Zaimportowano ${addedCount} zadań!`;
+                
+                // Re-render UI
+                renderProjectsTable();
+                renderWorkloadGrid();
+                renderCapacityBars();
+                
+                // Hide preview and reset form
+                setTimeout(() => {
+                    container.querySelector('#jira-preview-container').style.display = 'none';
+                    container.querySelector('#jira-import-confirm').style.display = 'none';
+                    container.querySelector('#jira-jql').value = '';
+                }, 2000);
+            } catch (err) {
+                statusDiv.style.color = 'var(--accent-red)';
+                statusDiv.textContent = `✗ Błąd importu: ${err.message}`;
+            } finally {
+                btn.textContent = '✓ Potwierdź import';
+                btn.disabled = false;
+            }
+        });
+    }
 
     // Reimport Excel
     container.querySelector('#reimport-excel-btn').addEventListener('click', async () => {

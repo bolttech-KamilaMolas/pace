@@ -265,87 +265,90 @@ def detect_sprints():
 @app.route('/api/jira/import', methods=['POST'])
 def import_jira_issues():
     """
-    Import issues from Jira and convert to allocations
-    Request body: { "jql_query": "...", "sprint_id": 9910 }
+    Import issues from Jira for capacity-planner frontend
+    Request body: { "project": "LSG", "jql": "...", "fields": [...] }
+    Returns: { "success": true, "issues": [{key, summary, assignee, status, dev_estimate_md, qa_estimate_md}] }
     """
     data = request.get_json()
-    jql_query = data.get('jql_query', 'project = "LSG" AND sprint IN (9910, 9675, 9609, 9576, 9811)')
-    sprint_id = data.get('sprint_id')
+    project = data.get('project', 'LSG')
+    jql = data.get('jql', f'project = {project}')
+    fields_requested = data.get('fields', [])
     
-    cache_key = f'jira:issues:{sprint_id}' if sprint_id else 'jira:issues:all'
-    cached = cache_get(cache_key)
-    if cached:
-        return jsonify(cached)
+    # Use mock data for testing if available
+    use_mock = os.path.exists('mock_lsg_issues.json')
     
     try:
-        # Query Jira for issues
-        issues_response = jira_request(
-            'search',
-            params={
-                'jql': jql_query,
-                'fields': [
-                    'assignee',
-                    'customfield_10270',        # Project Name
-                    'sprint',
-                    'timeoriginalestimate',     # Original Estimate
-                    'customfield_10695',        # Test Estimate
-                    'status',
-                    'summary',
-                    'issuetype'
-                ],
-                'maxResults': 100
-            }
-        )
+        if use_mock and project.upper() == 'LSG':
+            logger.info("📋 Using mock data from mock_lsg_issues.json")
+            with open('mock_lsg_issues.json', 'r') as f:
+                issues_data = json.load(f)
+                issues = issues_data.get('issues', [])
+        else:
+            # Query Jira for issues
+            issues_response = jira_request(
+                'search',
+                params={
+                    'jql': jql,
+                    'fields': fields_requested or [
+                        'assignee',
+                        'customfield_10270',        # Project Name
+                        'sprint',
+                        'timeoriginalestimate',     # Original Estimate (dev)
+                        'customfield_10695',        # Test Estimate (QA)
+                        'status',
+                        'summary',
+                        'issuetype'
+                    ],
+                    'maxResults': 100
+                }
+            )
+            issues = issues_response.get('issues', [])
         
-        issues = issues_response.get('issues', [])
-        
-        # Transform to allocations
-        allocations_by_sprint = {}
-        allocations_by_person = {}
+        # Transform to frontend-friendly format
+        transformed_issues = []
         
         for issue in issues:
-            person_name = get_person_from_jira_assignee(issue['fields'].get('assignee'))
-            if not person_name:
-                logger.warning(f"⚠️  Skipping {issue['key']}: no assignee")
-                continue
+            fields = issue.get('fields', {})
             
-            project_name = issue['fields'].get('customfield_10270', 'Unknown')
-            sprint_info = issue['fields'].get('sprint')
-            sprint_num = sprint_info['id'] if sprint_info else sprint_id
+            # Extract assignee name
+            assignee_obj = fields.get('assignee')
+            person_name = None
+            if assignee_obj:
+                person_name = assignee_obj.get('displayName') or assignee_obj.get('emailAddress')
             
-            # Create allocation entry
-            allocation = map_jira_issue_to_allocation(
-                issue,
-                person_name,
-                {'name': project_name, 'id': project_name}
-            )
+            # Convert seconds to man-days
+            dev_estimate_sec = fields.get('timeoriginalestimate') or 0
+            qa_estimate_sec = fields.get('customfield_10695') or 0
+            dev_estimate_md = map_seconds_to_md(dev_estimate_sec)
+            qa_estimate_md = map_seconds_to_md(qa_estimate_sec)
             
-            # Group by sprint and person
-            if sprint_num not in allocations_by_sprint:
-                allocations_by_sprint[sprint_num] = {}
-            
-            allocations_by_sprint[sprint_num][person_name] = allocation
-            
-            # Also group by person for easier lookup
-            if person_name not in allocations_by_person:
-                allocations_by_person[person_name] = []
-            allocations_by_person[person_name].append(allocation)
+            transformed_issues.append({
+                'key': issue.get('key'),
+                'summary': fields.get('summary', ''),
+                'assignee': person_name,
+                'status': fields.get('status', {}).get('name', ''),
+                'dev_estimate_md': dev_estimate_md,
+                'qa_estimate_md': qa_estimate_md,
+                'project_name': fields.get('customfield_10270', 'Unknown')
+            })
         
         result = {
             'success': True,
-            'issuesCount': len(issues),
-            'allocationsCount': sum(len(p) for p in allocations_by_sprint.values()),
-            'allocations_by_sprint': allocations_by_sprint,
-            'allocations_by_person': allocations_by_person,
+            'issues': transformed_issues,
+            'count': len(transformed_issues),
             'timestamp': datetime.now().isoformat()
         }
         
-        cache_set(cache_key, result, 'issues')
+        logger.info(f"✅ Imported {len(transformed_issues)} issues from {project}")
         return jsonify(result)
     
     except Exception as e:
         logger.error(f"❌ Error importing Jira issues: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'success': False,
+            'message': str(e),
+            'issues': []
+        }), 500
 
 @app.route('/api/cache/status', methods=['GET'])
 def cache_status():
