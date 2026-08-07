@@ -1,0 +1,143 @@
+{
+  "issues": [
+    {
+      "key": "LSG-1",
+      "id": "10001",
+      "fields": {
+        "summary": "Implement new dashboard widget",
+        "assignee": {
+          "displayName": "Kamila Molas",
+          "emailAddress": "kamila.molas@bolttech.pl"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "timeoriginalestimate": 86400,
+        "customfield_10695": 43200,
+        "customfield_10270": "Operations Excellence III"
+      }
+    },
+    {
+      "key": "LSG-2",
+      "id": "10002",
+      "fields": {
+        "summary": "Fix pricing calculation bug",
+        "assignee": {
+          "displayName": "Miko\u0142aj Banaszkiewicz",
+          "emailAddress": "mikolaj.banaszkiewicz@bolttech.pl"
+        },
+        "status": {
+          "name": "In Testing"
+        },
+        "timeoriginalestimate": 57600,
+        "customfield_10695": 28800,
+        "customfield_10270": "Dynamic Pricing System"
+      }
+    },
+    {
+      "key": "LSG-3",
+      "id": "10003",
+      "fields": {
+        "summary": "Add user authentication",
+        "assignee": {
+          "displayName": "Kamila Molas",
+          "emailAddress": "kamila.molas@bolttech.pl"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "timeoriginalestimate": 129600,
+        "customfield_10695": 86400,
+        "customfield_10270": "Operations Excellence III"
+      }
+    },
+    {
+      "key": "LSG-4",
+      "id": "10004",
+      "fields": {
+        "summary": "Database optimization",
+        "assignee": {
+          "displayName": "\u017baneta Fedor-Zalewska",
+          "emailAddress": "zaneta.fedor@bolttech.pl"
+        },
+        "status": {
+          "name": "In Testing"
+        },
+        "timeoriginalestimate": 0,
+        "customfield_10695": 57600,
+        "customfield_10270": "Infrastructure"
+      }
+    },
+    {
+      "key": "LSG-5",
+      "id": "10005",
+      "fields": {
+        "summary": "API documentation update",
+        "assignee": {
+          "displayName": "Tomasz Nowak",
+          "emailAddress": "tomasz.nowak@bolttech.pl"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "timeoriginalestimate": 43200,
+        "customfield_10695": 0,
+        "customfield_10270": "Technical Debt"
+      }
+    },
+    {
+      "key": "LSG-6",
+      "id": "10006",
+      "fields": {
+        "summary": "Security audit fixes",
+        "assignee": {
+          "displayName": "Kamila Molas",
+          "emailAddress": "kamila.molas@bolttech.pl"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "timeoriginalestimate": 72000,
+        "customfield_10695": 28800,
+        "customfield_10270": "Operations Excellence III"
+      }
+    },
+    {
+      "key": "LSG-7",
+      "id": "10007",
+      "fields": {
+        "summary": "Performance testing",
+        "assignee": {
+          "displayName": "\u017baneta Fedor-Zalewska",
+          "emailAddress": "zaneta.fedor@bolttech.pl"
+        },
+        "status": {
+          "name": "In Testing"
+        },
+        "timeoriginalestimate": 0,
+        "customfield_10695": 86400,
+        "customfield_10270": "Infrastructure"
+      }
+    },
+    {
+      "key": "LSG-8",
+      "id": "10008",
+      "fields": {
+        "summary": "Implement feature flags",
+        "assignee": {
+          "displayName": "Miko\u0142aj Banaszkiewicz",
+          "emailAddress": "mikolaj.banaszkiewicz@bolttech.pl"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "timeoriginalestimate": 115200,
+        "customfield_10695": 57600,
+        "customfield_10270": "Feature Flags System"
+      }
+    }
+  ],
+  "total": 8,
+  "maxResults": 8,
+  "startAt": 0
+}
