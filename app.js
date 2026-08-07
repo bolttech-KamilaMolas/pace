@@ -6102,10 +6102,6 @@ function renderProjectDetail(projectId) {
 // RENDERING FUNCTIONS (Placeholders for missing renders)
 // ============================================================
 
-function renderCapacityBars() {
-    const container = document.getElementById('capacity-bars');
-    if (container) container.innerHTML = '<div style="padding:20px; color:var(--bt-grey-500);">Capacity Bars — sekcja w przygotowaniu</div>';
-}
 // --- ACTION CENTER (for leaders) ---
 
 function renderActionCenter() {
