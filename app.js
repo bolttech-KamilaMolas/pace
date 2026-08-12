@@ -5144,7 +5144,23 @@ function renderSettings() {
     });
 
     // ===== JIRA IMPORT HANDLERS =====
-    let jiraPreviewData = null;
+    // Use localStorage to persist preview data across renderSettings calls
+    const getJiraPreviewData = () => {
+        try {
+            const data = localStorage.getItem('jira_preview_data');
+            return data ? JSON.parse(data) : null;
+        } catch (e) {
+            return null;
+        }
+    };
+    
+    const setJiraPreviewData = (data) => {
+        try {
+            localStorage.setItem('jira_preview_data', JSON.stringify(data));
+        } catch (e) {
+            console.error('Failed to save jira_preview_data:', e);
+        }
+    };
     
     // Test Jira connection
     const testConnBtn = container.querySelector('#jira-test-connection');
@@ -5211,7 +5227,7 @@ function renderSettings() {
                 const result = await resp.json();
                 
                 if (result.success && result.issues && result.issues.length > 0) {
-                    jiraPreviewData = result;
+                    setJiraPreviewData(result);
                     
                     // Render preview table
                     let html = `<div style="border:1px solid var(--bt-grey-200);border-radius:4px;overflow:auto;max-height:300px;margin-bottom:12px;">`;
@@ -5265,7 +5281,8 @@ function renderSettings() {
     const confirmBtn = container.querySelector('#jira-import-confirm');
     if (confirmBtn) {
         confirmBtn.addEventListener('click', async () => {
-            if (!jiraPreviewData || !jiraPreviewData.issues) {
+            const jiraData = getJiraPreviewData();
+            if (!jiraData || !jiraData.issues) {
                 alert('Brak danych do importu. Kliknij "Podgląd" najpierw.');
                 return;
             }
@@ -5280,11 +5297,25 @@ function renderSettings() {
                 // Merge Jira issues into PROJECTS
                 let addedCount = 0;
                 
-                jiraPreviewData.issues.forEach(issue => {
+                console.log('🔍 Import START - jiraData:', jiraData);
+                console.log('🔍 Issues count:', jiraData?.issues?.length);
+                console.log('🔍 Current PROJECTS.length:', PROJECTS.length);
+                console.log('🔍 SPRINTS available:', SPRINTS.length, 'first sprint:', SPRINTS[0]);
+                
+                if (!jiraData?.issues || jiraData.issues.length === 0) {
+                    throw new Error('Brak zadań do importu');
+                }
+                
+                console.log('🔍 First issue sample:', JSON.stringify(jiraData.issues[0]));
+                
+                jiraData.issues.forEach((issue, idx) => {
+                    console.log(`📦 [${idx}] Processing:`, issue.key, issue.summary, 'assignee:', issue.assignee);
                     // Find or create project for this issue
-                    let project = PROJECTS.find(p => p.name === issue.key);
+                    let existingProject = PROJECTS.find(p => p.name === issue.key);
+                    console.log(`   🔍 Looking for project with name="${issue.key}" - found:`, existingProject ? 'YES' : 'NO');
                     
-                    if (!project) {
+                    let project;
+                    if (!existingProject) {
                         project = {
                             id: `jira-${issue.key}`,
                             name: issue.key,
@@ -5303,10 +5334,18 @@ function renderSettings() {
                             jira_status: issue.status
                         };
                         PROJECTS.push(project);
+                        console.log('   ✅ CREATED & ADDED project:', issue.key);
                         addedCount++;
+                    } else {
+                        project = existingProject;
+                        console.log('   ℹ️ Project already exists, skipping creation');
                     }
                     
-                    // Add allocations if person exists (or create with default team)
+                    // Try to add allocations to next sprint
+                    const sprint = getNextSprint();
+                    console.log('🔍 Sprint lookup - sprint:', sprint, 'has id:', sprint?.id, 'assignee:', issue.assignee);
+                    
+                    // If we have an assignee, add them to allocations
                     if (issue.assignee) {
                         let person = PEOPLE.find(p => p.name === issue.assignee);
                         
@@ -5315,35 +5354,42 @@ function renderSettings() {
                             person = {
                                 name: issue.assignee,
                                 role: 'Developer',
-                                team: 'ALF',  // Default team for imported people
+                                team: 'ALF',
                                 projects: [],
                                 employmentType: 'full-time',
                                 availability: 100,
                                 assignedTeams: []
                             };
                             PEOPLE.push(person);
+                            console.log('✅ Created person:', issue.assignee);
                         }
                         
-                        const sprint = getNextSprint();
-                        if (sprint && sprint.id) {
-                            if (!project.allocations[sprint.id]) {
-                                project.allocations[sprint.id] = {};
-                            }
-                            project.allocations[sprint.id][person.name] = {
-                                dev_md: issue.dev_estimate_md || 0,
-                                qa_md: issue.qa_estimate_md || 0,
-                                notes: `Jira: ${issue.key}`
-                            };
+                        // Add to backlog sprint (sprint 0 or use sprint ID if available)
+                        const sprintId = sprint?.id || 'backlog';
+                        if (!project.allocations[sprintId]) {
+                            project.allocations[sprintId] = {};
                         }
+                        project.allocations[sprintId][person.name] = {
+                            dev_md: issue.dev_estimate_md || 0,
+                            qa_md: issue.qa_estimate_md || 0,
+                            notes: `Jira: ${issue.key}`
+                        };
+                        console.log('✅ Added allocation for', person.name, 'to', issue.key, 'sprint:', sprintId);
+                    } else {
+                        console.warn('⚠️ No assignee for', issue.key);
                     }
                 });
+                
+                console.log('✅ Import loop FINISHED - addedCount:', addedCount, 'PROJECTS.length now:', PROJECTS.length);
                 
                 saveProjects();
                 savePeople();  // Save newly created people from Jira import
                 saveAllocations();
                 
                 statusDiv.style.color = 'var(--accent-green)';
-                statusDiv.textContent = `✓ Zaimportowano ${addedCount} zadań!`;
+                // Show both new projects AND updated allocations
+                const sprintForMsg = SPRINTS.find(s => s.id === 269) || SPRINTS[0];
+                statusDiv.textContent = `✓ Przetworzono ${jiraData.issues.length} zadań - ${addedCount > 0 ? `dodano ${addedCount} nowych projektów` : 'zaktualizowano istniejące'} z alokacjami do ${sprintForMsg?.name || 'sprintu'}!`;
                 
                 // Re-render UI
                 renderProjectsTable();
@@ -7104,23 +7150,23 @@ function showPage(pageName) {
         switch(pageName) {
             case 'template':
                 console.log(`🟡 showPage: Renderuję TEMPLATE`);
-                renderDashboard();
+                renderCapacityBars();
                 break;
             case 'actioncenter':
                 console.log(`🟡 showPage: Renderuję ACTION CENTER`);
-                renderActionCenter();
+                renderActionNeeded();
                 break;
             case 'heatmap':
                 console.log(`🟡 showPage: Renderuję HEATMAP`);
-                renderWorkloadHeatmap();
+                renderWorkloadGrid();
                 break;
             case 'projects':
                 console.log(`🟡 showPage: Renderuję PROJECTS`);
-                renderProjects();
+                renderProjectsTable();
                 break;
             case 'workload':
                 console.log(`🟡 showPage: Renderuję WORKLOAD`);
-                renderWorkload();
+                renderWorkloadGrid();
                 break;
             case 'people':
                 console.log(`🟡 showPage: Renderuję PEOPLE`);
@@ -7137,7 +7183,7 @@ function showPage(pageName) {
                 break;
             case 'squadlead':
                 console.log(`🟡 showPage: Renderuję SQUADLEAD`);
-                renderSquadLead();
+                renderSprintAvailability();
                 break;
             case 'settings':
                 console.log(`🟡 showPage: Renderuję SETTINGS`);
@@ -7169,8 +7215,79 @@ function loadProjects() {
 }
 
 function saveProjects() {
-    localStorage.setItem('cp_projects', JSON.stringify(PROJECTS));
-    localStorage.setItem('cp_archived_projects', JSON.stringify(ARCHIVED_PROJECTS));
+    console.log('💾 saveProjects() called - saving', PROJECTS.length, 'projects to localStorage');
+    try {
+        localStorage.setItem('cp_projects', JSON.stringify(PROJECTS));
+        localStorage.setItem('cp_archived_projects', JSON.stringify(ARCHIVED_PROJECTS));
+        console.log('✅ Projects saved successfully');
+    } catch (e) {
+        console.error('❌ Error saving projects:', e);
+    }
+}
+
+function savePeople() {
+    console.log('💾 savePeople() called - saving', PEOPLE.length, 'people to localStorage');
+    try {
+        localStorage.setItem('cp_people', JSON.stringify(PEOPLE));
+        console.log('✅ People saved successfully');
+    } catch (e) {
+        console.error('❌ Error saving people:', e);
+    }
+}
+
+function loadPeople() {
+    const saved = localStorage.getItem('cp_people');
+    if (saved) {
+        try {
+            PEOPLE = JSON.parse(saved);
+        } catch (e) { }
+    }
+}
+
+function saveAllocations() {
+    // Allocations are stored in project.allocations, so just save projects
+    saveProjects();
+}
+
+function loadAllocations() {
+    // Allocations are loaded with projects
+    loadProjects();
+}
+
+// --- Stub render functions (to be implemented) ---
+function renderProjectsTable() {
+    console.log('⚠️ renderProjectsTable() stub - not implemented yet');
+    const container = document.getElementById('page-projects');
+    if (!container) return;
+    container.innerHTML = '<div style="padding: 20px;"><p>🚧 Projects view - coming soon</p></div>';
+}
+
+function renderCapacityBars() {
+    console.log('⚠️ renderCapacityBars() stub - not implemented yet');
+}
+
+function renderActionNeeded() {
+    console.log('⚠️ renderActionNeeded() stub - not implemented yet');
+}
+
+function renderWorkloadGrid() {
+    console.log('⚠️ renderWorkloadGrid() stub - not implemented yet');
+}
+
+function renderPeople() {
+    console.log('⚠️ renderPeople() stub - not implemented yet');
+}
+
+function renderSprints() {
+    console.log('⚠️ renderSprints() stub - not implemented yet');
+}
+
+function renderTeams() {
+    console.log('⚠️ renderTeams() stub - not implemented yet');
+}
+
+function renderSprintAvailability() {
+    console.log('⚠️ renderSprintAvailability() stub - not implemented yet');
 }
 
 

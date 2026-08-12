@@ -283,6 +283,9 @@ def import_jira_issues():
             with open('mock_lsg_issues.json', 'r') as f:
                 issues_data = json.load(f)
                 issues = issues_data.get('issues', [])
+            logger.info(f"📋 Loaded {len(issues)} issues from mock data")
+            if issues:
+                logger.info(f"📋 First issue sample: {json.dumps(issues[0])}")
         else:
             # Query Jira for issues
             issues_response = jira_request(
@@ -307,22 +310,29 @@ def import_jira_issues():
         # Transform to frontend-friendly format
         transformed_issues = []
         
-        for issue in issues:
+        logger.info(f"🔄 Starting transformation of {len(issues)} issues...")
+        
+        for idx, issue in enumerate(issues):
+            logger.info(f"🔄 [{idx}] Transforming issue: {issue.get('key')}")
+            
             fields = issue.get('fields', {})
+            logger.info(f"   - fields keys: {list(fields.keys())}")
             
             # Extract assignee name
             assignee_obj = fields.get('assignee')
             person_name = None
             if assignee_obj:
                 person_name = assignee_obj.get('displayName') or assignee_obj.get('emailAddress')
+            logger.info(f"   - assignee: {person_name}")
             
             # Convert seconds to man-days
             dev_estimate_sec = fields.get('timeoriginalestimate') or 0
             qa_estimate_sec = fields.get('customfield_10695') or 0
             dev_estimate_md = map_seconds_to_md(dev_estimate_sec)
             qa_estimate_md = map_seconds_to_md(qa_estimate_sec)
+            logger.info(f"   - dev_estimate_md: {dev_estimate_md}, qa_estimate_md: {qa_estimate_md}")
             
-            transformed_issues.append({
+            transformed_issue = {
                 'key': issue.get('key'),
                 'summary': fields.get('summary', ''),
                 'assignee': person_name,
@@ -330,7 +340,9 @@ def import_jira_issues():
                 'dev_estimate_md': dev_estimate_md,
                 'qa_estimate_md': qa_estimate_md,
                 'project_name': fields.get('customfield_10270', 'Unknown')
-            })
+            }
+            logger.info(f"   ✅ Transformed: {json.dumps(transformed_issue)}")
+            transformed_issues.append(transformed_issue)
         
         result = {
             'success': True,

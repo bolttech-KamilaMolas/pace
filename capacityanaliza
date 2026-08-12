@@ -1,0 +1,639 @@
+Poniżej przygotowałam analizę decka Kiplot oraz funkcji rynkowych narzędzi typu Float, Monday.com, Asana, ClickUp, Wrike i Hub Planner. Na tej podstawie proponuję specyfikację techniczną aplikacji, która łączy strategiczne zarządzanie portfelem, planowanie zasobów, kontrolę obciążenia, dostępność ludzi, finanse, wykonanie projektów i raportowanie zarządcze.
+
+1. Wnioski z analizy dokumentu Kiplot
+
+Kiplot pozycjonuje się jako platforma Strategic Portfolio Management, która łączy strategię, realizację i finanse w jednym systemie oraz integruje się z narzędziami takimi jak Jira, SAP, Azure DevOps, Microsoft Project i systemy ERP.
+
+Z dokumentu wynika, że kluczową wartością Kiplot jest “single source of truth” dla portfela projektów, inicjatyw agile, finansów, planowania zasobów, OKR-ów, business case’ów, raportowania i time trackingu.
+
+Kiplot obejmuje moduły takie jak goal setting, strategic roadmaps, investment governance, scenario analysis, epic planning, capacity management, prioritization, dependency management, delivery health, cost control, forecasting, value realization, business cases, automated reports i integracje dwukierunkowe z narzędziami wykonawczymi.
+
+Najważniejsza inspiracja z Kiplot dla projektowanej aplikacji: nie budować tylko narzędzia do tasków, ale platformę decyzyjną, która pokazuje, czy firma realizuje właściwe inicjatywy, czy ma na nie ludzi, ile to kosztuje i jaki przynosi efekt biznesowy.
+
+2. Wnioski z analizy narzędzi rynkowych
+Narzędzie	Najmocniejszy obszar	Co warto przenieść do projektowanej aplikacjiFloat	Planowanie zasobów, dostępność, role, umiejętności, capacity, utilization, project scoping, actuals, margin i budget burn.	Bardzo czytelny scheduler zasobów, planowanie miesięcy/kwartałów do przodu, obsługa PTO, skills matching i prognozowanie dostępności.
+Monday.com	Elastyczne zarządzanie projektami, boardy, workload widget, effort, capacity, work schedule i wieloboardowe dashboardy.	Konfigurowalne widoki, intake projektowy przez formularze, boardy approval, workload dashboard oraz automatyzacje procesowe.
+Asana	Workload across projects, capacity bars, effort in hours/points, drag and drop rebalancing, portfolios, goals i resource management.	Widok łącznego obciążenia ludzi na wielu projektach, limity capacity per osoba, rebalancing przez przeciąganie oraz połączenie z celami.
+ClickUp	Workload view, time estimates, custom fields, time tracking, availability/capacity, views i raportowanie czasu.	Uniwersalny model tasków, custom fields, pomiar pracy w godzinach, task count, points lub custom unit oraz wbudowany time tracking.
+Wrike	Capacity planning, workload view, Gantt, dashboards, timesheets, work schedules, daily capacity i raporty.	Zaawansowane harmonogramy pracy, capacity per dzień, raporty wykorzystania i kontrola wielu projektów na poziomie organizacji.
+Hub Planner	Resource scheduling, timesheets, vacation management, utilization, billability, profitability, heat map capacity i reports.	Resource-first approach, heatmapa dostępności, urlopy, timesheet approval, scheduled vs actual oraz raporty billability/profitability.
+3. Docelowa koncepcja aplikacji
+Nazwa robocza
+
+Portfolio & Capacity Control Platform
+
+Cel aplikacji
+
+Aplikacja ma umożliwiać zarządzanie portfelem inicjatyw, projektami, zespołami, obciążeniem ludzi, dostępnością, finansami, priorytetami, ryzykami, zależnościami i raportowaniem w jednym miejscu.
+
+Główna obietnica produktu
+
+Jedno źródło prawdy pokazujące: co realizujemy, po co to robimy, kto nad tym pracuje, czy mamy capacity, ile to kosztuje, jakie są ryzyka i jaki efekt biznesowy osiągamy.
+
+4. Moduły aplikacji i zakres danych
+4.1. Moduł strategii, celów i OKR
+
+Zakres funkcjonalny:
+
+definiowanie celów strategicznych,
+OKR-y na poziomie firmy, tribe, value stream, programu, zespołu,
+mapowanie inicjatyw do celów,
+wskaźniki postępu i health status,
+powiązanie celów z budżetem, capacity i roadmapą.
+
+Zakres danych:
+
+Objective
+Key Result
+Strategic Theme
+Business Outcome
+Owner
+Time Horizon
+Confidence Score
+Progress
+Linked Initiatives
+Linked Budget
+Linked Teams
+
+Inspiracja: Kiplot mocno eksponuje goal setting, OKR-y i strategic roadmaps jako element połączenia strategii z realizacją.
+
+4.2. Moduł demand intake i investment governance
+
+Zakres funkcjonalny:
+
+zgłaszanie nowych inicjatyw przez formularze,
+workflow oceny i akceptacji,
+scoring biznesowy,
+klasyfikacja inicjatyw,
+approval gates,
+business case,
+priorytetyzacja inwestycji,
+porównywanie alternatywnych scenariuszy.
+
+Zakres danych:
+
+Demand Request
+Initiative
+Business Case
+Expected Value
+Strategic Fit
+Risk Score
+Cost Estimate
+Capacity Estimate
+Approval Status
+Decision Log
+Sponsor
+Portfolio Owner
+
+Inspiracja: Monday.com opisuje proces zbierania pomysłów przez formularze, projekt approval pipeline i high-level project overview, a Kiplot wskazuje investment governance, business cases i scenario analysis jako elementy platformy portfelowej.
+
+4.3. Moduł portfela, programów i projektów
+
+Zakres funkcjonalny:
+
+hierarchia: strategia → portfolio → program → projekt → epic → task,
+obsługa podejścia agile, waterfall i mixed portfolio,
+roadmapy strategiczne,
+status delivery,
+milestone tracking,
+zależności między projektami,
+health score projektu,
+widoki Gantt, board, roadmap, timeline, portfolio dashboard.
+
+Zakres danych:
+
+Portfolio
+Program
+Project
+Epic
+Milestone
+Task
+Dependency
+Risk
+Issue
+Delivery Status
+Baseline
+Forecast Finish Date
+Actual Finish Date
+
+Inspiracja: Kiplot deklaruje obsługę agile, traditional i mixed portfolios, integracje z Jira, Azure DevOps i Microsoft Project oraz widoczność portfolio w jednym miejscu.
+
+4.4. Moduł resource management i capacity planning
+
+To powinien być jeden z najważniejszych modułów systemu.
+
+Zakres funkcjonalny:
+
+centralna baza ludzi i zespołów,
+availability per osoba,
+capacity per dzień, tydzień, sprint, miesiąc, kwartał,
+umiejętności, role, lokalizacja, stawka, seniority,
+urlopy, święta, nieobecności, kontrakty,
+obciążenie planowane i rzeczywiste,
+heatmapa przeciążenia,
+skill-based allocation,
+placeholder resources,
+rezerwacje tentative/confirmed,
+planowanie scenariuszy capacity,
+wykrywanie bottlenecków.
+
+Zakres danych:
+
+Person
+Team
+Role
+Skill
+Skill Level
+Location
+Calendar
+Work Schedule
+Daily Capacity
+Availability
+Allocation
+Booking
+Tentative Booking
+Confirmed Booking
+Time Off
+Utilization
+Overbooking
+Underutilization
+FTE
+Cost Rate
+Bill Rate
+
+Inspiracja: Float daje live view dostępności, ról, skills i capacity, Wrike pozwala konfigurować daily capacity w work schedules, a Hub Planner koncentruje się na resource-first scheduling, heatmapie capacity, urlopach i utilization.
+
+4.5. Moduł workload management
+
+Zakres funkcjonalny:
+
+widok obciążenia per osoba,
+widok obciążenia per zespół,
+porównanie capacity vs allocation,
+obciążenie z wielu projektów jednocześnie,
+przeciągnij i upuść do zmiany przypisania,
+alerty przeciążenia,
+workload units: godziny, story points, task count, FTE, custom effort,
+forecast przeciążenia w przyszłości.
+
+Zakres danych:
+
+Workload Item
+Assignee
+Effort
+Effort Unit
+Capacity Limit
+Date Range
+Workload Source
+Overload Threshold
+Workload Status
+Forecasted Load
+
+Inspiracja: Asana oferuje workload across projects, capacity bars, effort w godzinach lub punktach i drag-and-drop rebalancing, a ClickUp pozwala mierzyć workload przez task count, time estimates, sprint points lub custom fields.
+
+4.6. Moduł time tracking i timesheets
+
+Zakres funkcjonalny:
+
+planowane vs rzeczywiste godziny,
+timesheet dzienny i tygodniowy,
+timer,
+approval workflow,
+pre-fill timesheets z harmonogramu,
+billable vs non-billable,
+kategorie pracy,
+eksport do finansów i controllingu,
+raport zgodności CapEx/OpEx.
+
+Zakres danych:
+
+Timesheet
+Time Entry
+Planned Hours
+Actual Hours
+Billable Flag
+Non-billable Reason
+Approval Status
+Approver
+Work Category
+Cost Center
+CapEx/OpEx
+Project Code
+Vendor
+
+Inspiracja: Hub Planner timesheets mogą być pre-populowane z harmonogramu i obsługują approval workflow, billable/non-billable oraz porównanie scheduled vs actual, a ClickUp pokazuje time tracking data w wielu widokach, w tym Workload.
+
+4.7. Moduł finansów projektowych i value realization
+
+Zakres funkcjonalny:
+
+budżet inicjatywy,
+forecast kosztów,
+actuals,
+accruals,
+CapEx/OpEx,
+burn rate,
+ROI,
+business value,
+margin,
+profitability,
+integracja z ERP,
+kontrola kosztów vendorów.
+
+Zakres danych:
+
+Budget
+Forecast
+Actual Cost
+Committed Cost
+Accrual
+CapEx
+OpEx
+Cost Center
+Purchase Order
+Invoice
+Vendor
+Benefit
+ROI
+Margin
+Budget Burn
+Financial Period
+
+Inspiracja: Kiplot pokazuje cost control, forecasting, value realization, business cases oraz integracje z SAP i Oracle, a Float wskazuje tracking actuals, margin i budget burn jako elementy delivery insights.
+
+4.8. Moduł dependency, risk i issue management
+
+Zakres funkcjonalny:
+
+zależności między projektami, zespołami i systemami,
+mapa zależności graficzna,
+ryzyka i issue log,
+escalation workflow,
+wpływ zależności na delivery date, capacity i budżet,
+automatyczne wykrywanie konfliktów terminów.
+
+Zakres danych:
+
+Dependency
+Dependency Type
+Source
+Target
+Risk
+Issue
+Impact
+Probability
+Mitigation Plan
+Escalation Level
+Owner
+Due Date
+
+Inspiracja: Kiplot wskazuje dependency management i delivery health jako kluczowe elementy kontroli realizacji, a Wrike eksponuje Gantt charts, dashboards, milestones i due dates w capacity planning.
+
+4.9. Moduł raportowania, dashboardów i analytics
+
+Zakres funkcjonalny:
+
+dashboard zarządczy,
+dashboard portfolio,
+dashboard capacity,
+dashboard finansowy,
+raport utilization,
+forecast bottlenecków,
+raport ROI i value realization,
+export do PowerPoint, Excel, PDF,
+alerty i subskrypcje raportów,
+drill-down do źródła danych.
+
+Zakres danych:
+
+Dashboard
+Widget
+Metric
+KPI
+Report
+Filter
+Snapshot
+Trend
+Alert
+Subscription
+Export Job
+
+Inspiracja: Kiplot akcentuje instant automated reports i ograniczenie manualnego raportowania w PowerPoint/Excel, a Hub Planner i Wrike podkreślają real-time reports, team utilization, budgets i workload dashboards.
+
+4.10. Moduł integracji
+
+Zakres funkcjonalny:
+
+integracje dwukierunkowe,
+mapping pól,
+synchronizacja statusów,
+import ludzi z HR,
+import kosztów z ERP,
+import zadań z Jira/Azure DevOps,
+integracja z kalendarzami,
+webhooki,
+API publiczne,
+ETL/ELT do hurtowni danych.
+
+Systemy do integracji:
+
+Jira
+Azure DevOps
+Microsoft Project
+SAP
+Oracle ERP
+Workday lub inny HRIS
+Microsoft Entra ID
+Microsoft Teams
+Outlook Calendar
+Power BI
+Slack
+GitHub/GitLab, opcjonalnie
+
+Inspiracja: Kiplot deklaruje dwukierunkowe integracje z Jira i Azure DevOps oraz integracje z SAP, Oracle i systemami delivery/finance/HR w celu stworzenia single source of truth.
+
+5. Proponowana architektura aplikacji
+5.1. Architektura logiczna
+
+Rekomendowana architektura: modular monolith na start, z gotowością do wydzielania mikroserwisów.
+
+Dla MVP i pierwszych wdrożeń modular monolith będzie szybszy, tańszy i łatwiejszy do utrzymania. Dla dużych klientów enterprise należy zaprojektować jasne bounded contexts, aby później wydzielić niezależne serwisy.
+
+Warstwy aplikacji
+
+Frontend Web
+
+React lub Angular
+TypeScript
+komponenty scheduler, timeline, Gantt, board, heatmap, dashboards
+responsywność desktop-first
+
+Backend API
+
+Java/Kotlin Spring Boot, .NET, NestJS lub Python FastAPI
+REST API dla UI
+GraphQL opcjonalnie dla dashboardów i widoków złożonych
+OpenAPI jako standard dokumentacji
+
+Domain Services
+
+Portfolio Service
+Resource Service
+Workload Service
+Financial Service
+Timesheet Service
+Integration Service
+Reporting Service
+Notification Service
+Identity & Access Service
+
+Data Layer
+
+relacyjna baza transakcyjna
+hurtownia/analityka
+search index
+cache
+object storage
+event bus
+
+Integration Layer
+
+konektory do Jira, Azure DevOps, SAP, HRIS
+webhook receiver
+job scheduler
+message queue
+retry, dead letter queue, audit log
+5.2. Architektura techniczna, wariant rekomendowany
+Frontend
+React + TypeScript
+Next.js dla SSR tylko jeśli aplikacja ma mieć publiczne obszary lub zaawansowane routing/performance
+TanStack Query do pracy z API
+AG Grid lub Handsontable dla dużych tabel
+DHTMLX/Scheduler, Bryntum albo własny komponent scheduler dla capacity planning
+Recharts/ECharts dla dashboardów
+Microsoft Fluent UI, jeśli aplikacja ma być spójna z ekosystemem Microsoft
+Backend
+.NET 8/9 albo Java Spring Boot
+REST API jako podstawowy interfejs
+GraphQL dla widoków agregujących, opcjonalnie
+CQRS dla raportów i złożonych odczytów
+event-driven processing dla synchronizacji i przeliczania capacity
+Bazy danych
+Obszar	Rekomendowana technologia	UzasadnienieDane transakcyjne	PostgreSQL lub Azure SQL	Projekty, ludzie, alokacje, budżety, timesheets wymagają spójności relacyjnej.
+Dane analityczne	Azure Synapse, BigQuery, Snowflake lub ClickHouse	Dashboardy, utilization, forecasty i raporty historyczne będą wymagały szybkich agregacji.
+Cache	Redis	Przyspieszenie widoków workload, availability i dashboardów.
+Search	Elasticsearch lub OpenSearch	Wyszukiwanie po projektach, ludziach, skills, dokumentach, decyzjach.
+Pliki	Azure Blob Storage lub S3	Załączniki, eksporty, snapshoty, importy CSV/XLSX.
+Event streaming	Kafka, Azure Event Hubs lub RabbitMQ	Synchronizacje z zewnętrznymi systemami, eventy domenowe i async processing.
+Audit log	PostgreSQL append-only lub dedykowany event store	Wymagane dla enterprise governance, finansów i decyzji portfelowych.
+6. Kluczowe domeny danych
+6.1. Model wysokiego poziomu
+Organization
+ ├── Business Unit
+ ├── Portfolio
+ │    ├── Program
+ │    │    ├── Project / Initiative
+ │    │    │    ├── Epic
+ │    │    │    ├── Task
+ │    │    │    ├── Milestone
+ │    │    │    ├── Risk
+ │    │    │    ├── Dependency
+ │    │    │    ├── Budget
+ │    │    │    └── Benefit
+ ├── Team
+ │    ├── Person
+ │    │    ├── Skill
+ │    │    ├── Calendar
+ │    │    ├── Capacity
+ │    │    ├── Allocation
+ │    │    └── Timesheet
+ └── Objective
+      └── Key Result
+           └── Linked Initiative
+
+6.2. Najważniejsze encje
+Person
+id
+imię i nazwisko
+email
+rola
+seniority
+skills
+team
+manager
+lokalizacja
+typ zatrudnienia
+koszt dzienny/godzinowy
+kalendarz pracy
+domyślna dzienna capacity
+status aktywności
+Allocation
+osoba
+projekt
+rola w projekcie
+data od/do
+godziny lub FTE
+typ: tentative/confirmed
+źródło: manual/import/Jira/Azure DevOps
+status
+koszt planowany
+Workload
+osoba
+okres
+capacity
+allocation
+actuals
+availability
+utilization
+overload status
+underload status
+forecast
+Initiative
+nazwa
+opis
+sponsor
+portfolio
+cel strategiczny
+priorytet
+status
+business case
+szacowany koszt
+szacowany benefit
+wymagane capacity
+zależności
+ryzyka
+Financial Record
+projekt
+okres finansowy
+budget
+forecast
+actual
+accrual
+CapEx/OpEx
+cost center
+vendor
+PO/invoice reference
+7. Najważniejsze procesy biznesowe
+7.1. Intake inicjatywy
+Użytkownik zgłasza inicjatywę przez formularz.
+System wylicza wstępny scoring.
+Portfolio Owner ocenia strategic fit.
+Resource Manager ocenia capacity.
+Finance ocenia budżet.
+Komitet zatwierdza, odrzuca lub odkłada inicjatywę.
+Po akceptacji inicjatywa trafia do roadmapy i planu capacity.
+7.2. Planowanie capacity
+System pobiera availability ludzi z kalendarzy i HR.
+System pobiera aktualne alokacje z projektów.
+Resource Manager rezerwuje ludzi lub placeholdery.
+System pokazuje przeciążenia.
+Można wykonać scenariusz “what-if”.
+Po zatwierdzeniu alokacja zmienia się z tentative na confirmed.
+7.3. Kontrola wykonania
+Taski i statusy synchronizują się z Jira/Azure DevOps.
+Timesheets zbierają actuals.
+Finanse pobierają actual cost z ERP.
+Dashboard porównuje plan vs actual.
+Alerty pokazują ryzyko przekroczenia budżetu, terminu lub capacity.
+8. Role i uprawnienia
+Rola	Zakres uprawnieńAdministrator	konfiguracja tenantów, SSO, role, integracje, słowniki
+Portfolio Owner	zarządzanie portfelem, priorytetami, roadmapą i decyzjami
+Program Manager	zarządzanie programem, zależnościami, ryzykami i raportami
+Project Manager	plan projektu, status, budżet, ryzyka, alokacje
+Resource Manager	capacity, availability, alokacje, skills, urlopy
+Finance Controller	budżet, actuals, forecast, CapEx/OpEx, accruals
+Team Lead	workload zespołu, przypisania, timesheets approval
+Team Member	własne zadania, dostępność, timesheets
+Executive	dashboardy, KPI, decyzje, raporty zarządcze
+9. Wymagania niefunkcjonalne
+Bezpieczeństwo
+SSO przez Microsoft Entra ID, Okta lub SAML/OIDC.
+RBAC i opcjonalnie ABAC.
+Row-level security dla portfeli i jednostek organizacyjnych.
+Audit log dla zmian w budżetach, alokacjach, statusach i decyzjach.
+Szyfrowanie danych w spoczynku i w transmisji.
+Separacja tenantów w modelu SaaS.
+Skalowalność
+obsługa od kilkudziesięciu do kilkudziesięciu tysięcy użytkowników,
+asynchroniczne przeliczanie capacity,
+cache dla workload views,
+preagregowane metryki dashboardowe,
+partycjonowanie danych czasowych, np. timesheets, allocations, financial periods.
+Wydajność
+widok workload dla 500 osób w czasie poniżej 3 sekund,
+dashboard portfolio poniżej 5 sekund,
+import danych z Jira/Azure DevOps incremental,
+przeliczanie forecastów jako background jobs.
+Compliance
+GDPR,
+data retention policy,
+auditability,
+export danych klienta,
+data residency dla klientów enterprise,
+możliwość anonimizacji lub usunięcia danych osobowych.
+10. MVP i roadmapa wdrożenia
+MVP, 4 do 6 miesięcy
+Organizacja, użytkownicy, zespoły, role.
+Projekty i inicjatywy.
+Resource scheduling.
+Capacity vs allocation.
+Workload heatmap.
+Urlopy i kalendarze.
+Timesheets podstawowe.
+Dashboard portfolio i capacity.
+Import CSV/XLSX.
+SSO.
+Integracja jednostronna z Jira lub Azure DevOps.
+Wersja 2
+Business case.
+Investment governance.
+Scenario planning.
+Integracje dwukierunkowe.
+Finanse projektowe.
+Forecast kosztów.
+Approval workflow dla timesheets.
+Skills matching.
+Zaawansowane raporty.
+Wersja 3 enterprise
+OKR i strategic alignment.
+Value realization.
+ERP integration SAP/Oracle.
+AI recommendations.
+Predictive bottlenecks.
+Automatyczne executive reports.
+Hurtownia danych.
+API marketplace i konektory.
+11. Rekomendowana definicja “najlepszej sumy” funkcji
+
+Projektowana aplikacja powinna łączyć:
+
+Kiplot: strategic portfolio management, OKR, investment governance, finances, integrations i executive reporting.
+Float: prosty i mocny resource scheduler, availability, skills, utilization, actuals, margin i budget burn.
+Monday.com: elastyczne boardy, formularze intake, automatyzacje i workload widget.
+Asana: portfolio workload, capacity bars, effort i szybkie rebalansowanie pracy.
+ClickUp: custom fields, wiele jednostek workload, time estimates i time tracking w wielu widokach.
+Wrike: capacity planning, work schedules, Gantt, dashboards, milestones i timesheets.
+Hub Planner: resource-first scheduling, timesheets, PTO, utilization, billability, profitability i heatmapa capacity.
+12. Najważniejsze decyzje produktowe
+Co powinno wyróżniać aplikację?
+
+Resource-first + portfolio-first jednocześnie
+ Większość narzędzi jest albo mocna w projektach, albo w zasobach. Tu przewagą powinno być połączenie obu perspektyw.
+
+Plan vs actual w każdej domenie
+ Dla capacity, czasu, kosztów, terminów, value i utilization.
+
+Scenariusze decyzyjne
+ “Co się stanie, jeśli przesuniemy projekt?”, “Czy mamy ludzi na Q3?”, “Które inicjatywy powinniśmy zatrzymać?”.
+
+Integracje jako fundament, nie dodatek
+ System nie powinien wymagać ręcznego przepisywania danych z Jira, Azure DevOps, ERP czy HR.
+
+Executive-ready reporting
+ Dashboardy powinny zastępować ręczne przygotowywanie statusów w PowerPoint i Excel.
+
+Podsumowanie
+
+Rekomenduję budowę platformy klasy Strategic Portfolio & Resource Capacity Management, a nie zwykłej aplikacji do zarządzania projektami. Najważniejsze moduły to: portfolio, intake, OKR, resource management, workload, scheduling, timesheets, finanse, dependencies, reporting i integracje. Technicznie najlepszym startem będzie modular monolith z PostgreSQL/Azure SQL, Redis, hurtownią analityczną, event bus i warstwą konektorów do Jira, Azure DevOps, ERP i HR.
+
+Dlaczego taka struktura: specyfikacja została ułożona od wartości biznesowej do architektury technicznej, żeby można było wykorzystać ją zarówno w rozmowie z biznesem, jak i jako punkt startowy dla zespołu produktowo-technicznego.
