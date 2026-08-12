@@ -285,7 +285,7 @@ function renderWorkBreakdown(metrics) {
         // Team name with color indicator
         const teamNameDiv = document.createElement('div');
         teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 8px; flex-shrink: 0; width: 100px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
-        teamNameDiv.innerHTML = `<span style="font-size: 12px; color: var(--text-secondary);">▶</span><strong style="color: ${metric.teamColor};">${metric.teamName}</strong>`;
+        teamNameDiv.innerHTML = `<strong style="color: ${metric.teamColor};">${metric.teamName}</strong>`;
         
         // Segments for each category
         const segmentsDiv = document.createElement('div');
