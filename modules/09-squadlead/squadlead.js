@@ -285,7 +285,7 @@ function renderWorkBreakdown(metrics) {
         // Team name with color indicator
         const teamNameDiv = document.createElement('div');
         teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 8px; font-weight: 600; flex-shrink: 0; width: 100px; font-size: 13px;`;
-        teamNameDiv.innerHTML = `<span style="width: 10px; height: 10px; border-radius: 2px; background: ${metric.teamColor}; flex-shrink: 0;"></span><span style="color: ${metric.teamColor};">${metric.teamName}</span>`;
+        teamNameDiv.innerHTML = `<span style="width: 10px; height: 10px; border-radius: 2px; background: ${metric.teamColor}; flex-shrink: 0;"></span><span style="color: ${metric.teamColor}; font-weight: 600;">${metric.teamName}</span>`;
         
         // Segments for each category
         const segmentsDiv = document.createElement('div');
@@ -315,7 +315,7 @@ function renderWorkBreakdown(metrics) {
                     background: ${bgColor}; 
                     border: 1px solid ${borderColor};
                     color: ${textColor}; 
-                    font-size: 11px; 
+                    font-size: 13px; 
                     font-weight: 600; 
                     flex: 1;
                     min-height: auto;
