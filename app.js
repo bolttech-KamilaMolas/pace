@@ -154,10 +154,7 @@ let PROJECTS = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
 let ARCHIVED_PROJECTS = [];
 
 // Sort order for roles within teams (lower = shown first)
-// Use from constants.js if available, otherwise define here
-
-    };
-}
+// Loaded from constants.js (included BEFORE app.js)
 
 var DEFAULT_PEOPLE = [
     // --- ALF ---
