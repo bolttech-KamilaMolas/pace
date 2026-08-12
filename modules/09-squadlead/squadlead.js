@@ -182,7 +182,7 @@ function renderCapacityTable() {
                 <div class="team-name-cell">
                     <span class="expand-icon" data-team-id="${metric.teamId}">${chevron}</span>
                     <div class="team-icon" style="background: ${metric.teamColor};"></div>
-                    <strong>${metric.teamName}</strong>
+                    <strong style="color: ${metric.teamColor};">${metric.teamName}</strong>
                 </div>
             </td>
             <td>${metric.fteAvailable} MD</td>
