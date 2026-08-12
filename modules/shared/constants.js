@@ -48,14 +48,8 @@ function getPriorityClass(priority) {
 }
 
 // ===== PROJECT CATEGORIES =====
-const PROJECT_CATEGORIES = {
-    'project': 'Project',
-    'bau': 'BAU (Business as Usual)',
-    'maintenance': 'Maintenance',
-    'overhead': 'Overhead',
-    'scrum': 'Scrum Activities',
-    'other': 'Other'
-};
+// MOVED TO: project-constants.js (more detailed definitions)
+// Reference: project-constants.js has full PROJECT_CATEGORIES definitions
 
 // ===== STATUS CHIPS =====
 const STATUS_OPTIONS = ['not_started', 'in-progress', 'blocked', 'done', 'on-hold', 'at-risk'];
@@ -129,7 +123,7 @@ if (typeof module !== 'undefined' && module.exports) {
         BASE_DATE, TOTAL_WEEKS, FRIDAY_FACTOR,
         TEAMS, ROLES, ROLE_SORT_ORDER,
         PRIORITY_LEVELS, getPriorityClass,
-        PROJECT_CATEGORIES, STATUS_OPTIONS, HEALTH_OPTIONS,
+        STATUS_OPTIONS, HEALTH_OPTIONS,
         formatDate, formatDateKey, getWeekStart, getWeekRange, parseSprintDates,
         PUBLIC_HOLIDAYS, COLORS
     };
