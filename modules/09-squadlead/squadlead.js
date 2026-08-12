@@ -234,69 +234,74 @@ function renderWorkBreakdown(metrics) {
     const categoryLabels = { projects: 'Projects', bau: 'BAU', maintenance: 'Maintenance', scrum: 'Scrum', overhead: 'Overhead' };
     const categoryEmoji = { projects: '🎯', bau: '🔧', maintenance: '🛠️', scrum: '👥', overhead: '📋' };
     
-    metrics.forEach(metric => {
-        const params = MOCK_CAPACITY_PARAMS[metric.teamId] || { overhead: 5, scrum: 10, maintenance: 15, bau: 15, projects: 55 };
-        const totalCapacity = metric.fteAvailable;
+    // Calculate actuals for all teams
+    const calculateActualAllocations = (teamId, sprintIdx) => {
+        const actual = { projects: 0, bau: 0, maintenance: 0, scrum: 0, overhead: 0 };
+        MOCK_PROJECTS.forEach(proj => {
+            if (proj.allocations && proj.allocations[teamId] && proj.allocations[teamId][sprintIdx]) {
+                const md = proj.allocations[teamId][sprintIdx];
+                if (proj.category === 'project') actual.projects += md;
+                else if (proj.category === 'bau') actual.bau += md;
+                else if (proj.category === 'maintenance') actual.maintenance += md;
+                else if (proj.category === 'scrum') actual.scrum += md;
+                else if (proj.category === 'overhead') actual.overhead += md;
+            }
+        });
+        return actual;
+    };
+    
+    // Per-category view (main breakdown)
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.gap = '24px';
+    
+    categoryOrder.forEach(category => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.style.marginBottom = '16px';
         
-        // Team section
-        const teamDiv = document.createElement('div');
-        teamDiv.style.marginBottom = '24px';
-        
-        // Team header
+        // Category header
         const header = document.createElement('div');
-        header.style.cssText = `display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);`;
-        header.innerHTML = `<strong style="color: ${metric.teamColor}; font-size: 13px;">${metric.teamName}</strong><span style="color: var(--text-secondary); font-size: 11px;">${totalCapacity} MD</span>`;
+        header.style.cssText = `display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--bt-navy); font-weight: 600; font-size: 13px;`;
+        header.innerHTML = `<span style="font-size: 16px;">${categoryEmoji[category]}</span><span>${categoryLabels[category]}</span>`;
         
         // Grid header
         const gridHeader = document.createElement('div');
-        gridHeader.style.cssText = `display: grid; grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1fr 1fr; gap: 12px; padding: 8px; font-size: 11px; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.3px;`;
-        gridHeader.innerHTML = `<div>Category</div><div style="text-align: center;">Plan %</div><div style="text-align: center;">Plan MD</div><div style="text-align: center;">Actual %</div><div style="text-align: center;">Actual MD</div><div style="text-align: right;">Status</div>`;
+        gridHeader.style.cssText = `display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 8px; font-size: 11px; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.3px;`;
+        gridHeader.innerHTML = `<div>Team</div><div style="text-align: center;">Plan MD</div><div style="text-align: center;">Actual MD</div><div style="text-align: right;">Variance</div>`;
         
-        // Calculate actuals
-        const calculateActualAllocations = (teamId, sprintIdx) => {
-            const actual = { projects: 0, bau: 0, maintenance: 0, scrum: 0, overhead: 0 };
-            MOCK_PROJECTS.forEach(proj => {
-                if (proj.allocations && proj.allocations[teamId] && proj.allocations[teamId][sprintIdx]) {
-                    const md = proj.allocations[teamId][sprintIdx];
-                    if (proj.category === 'project') actual.projects += md;
-                    else if (proj.category === 'bau') actual.bau += md;
-                    else if (proj.category === 'maintenance') actual.maintenance += md;
-                    else if (proj.category === 'scrum') actual.scrum += md;
-                    else if (proj.category === 'overhead') actual.overhead += md;
-                }
-            });
-            return actual;
-        };
-        
-        const actualMD = calculateActualAllocations(metric.teamId.toLowerCase(), currentSprintIdx);
-        
-        // Grid items
+        // Grid items (teams for this category)
         const gridBody = document.createElement('div');
-        categoryOrder.forEach(cat => {
-            const plannedMD = Math.round((params[cat] / 100) * totalCapacity * 10) / 10;
-            const actualMD_val = actualMD[cat] || 0;
-            const plannedPercent = params[cat];
-            const actualPercent = Math.round((actualMD_val / totalCapacity) * 100);
-            const hasWarning = actualMD_val > plannedMD;
+        metrics.forEach(metric => {
+            const params = MOCK_CAPACITY_PARAMS[metric.teamId] || { overhead: 5, scrum: 10, maintenance: 15, bau: 15, projects: 55 };
+            const totalCapacity = metric.fteAvailable;
+            const actualMD_all = calculateActualAllocations(metric.teamId.toLowerCase(), currentSprintIdx);
             
-            const row = document.createElement('div');
-            row.style.cssText = `display: grid; grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1fr 1fr; gap: 12px; padding: 8px; align-items: center; border-radius: 4px; ${hasWarning ? 'background: var(--bt-cyan-pale); border-left: 3px solid var(--bt-cyan);' : 'border-left: 3px solid transparent;'}`;
-            row.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 6px;"><span>${categoryEmoji[cat]}</span><span style="font-weight: 600;">${categoryLabels[cat]}</span></div>
-                <div style="text-align: center; font-size: 12px; font-weight: 600; color: var(--text-primary);">${plannedPercent}%</div>
-                <div style="text-align: center; font-size: 12px; color: var(--text-secondary);">${plannedMD.toFixed(1)}</div>
-                <div style="text-align: center; font-size: 12px; font-weight: 600; color: var(--text-primary);">${actualPercent}%</div>
-                <div style="text-align: center; font-size: 12px; color: var(--text-secondary);">${actualMD_val.toFixed(1)}</div>
-                <div style="text-align: right; font-size: 11px; font-weight: 600; color: ${hasWarning ? 'var(--error)' : 'var(--success)'};">${hasWarning ? '⚠️ Over' : '✓'}</div>
-            `;
-            gridBody.appendChild(row);
+            const plannedMD = Math.round((params[category] / 100) * totalCapacity * 10) / 10;
+            const actualMD_val = actualMD_all[category] || 0;
+            const variance = actualMD_val - plannedMD;
+            const hasWarning = variance > 0.5; // warning if > 0.5 MD over
+            
+            if (plannedMD > 0 || actualMD_val > 0) { // Only show if there's data
+                const row = document.createElement('div');
+                row.style.cssText = `display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 8px; align-items: center; border-radius: 4px; ${hasWarning ? 'background: var(--bt-cyan-pale); border-left: 3px solid var(--bt-cyan);' : 'border-left: 3px solid transparent;'}`;
+                row.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 16px; height: 16px; border-radius: 3px; background: ${metric.teamColor};"></span><strong style="color: ${metric.teamColor};">${metric.teamName}</strong></div>
+                    <div style="text-align: center; font-size: 12px; color: var(--text-secondary);">${plannedMD.toFixed(1)}</div>
+                    <div style="text-align: center; font-size: 12px; font-weight: 600; color: var(--text-primary);">${actualMD_val.toFixed(1)}</div>
+                    <div style="text-align: right; font-size: 11px; font-weight: 600; color: ${hasWarning ? 'var(--error)' : variance < -0.5 ? 'var(--success)' : 'var(--text-secondary)'};">${variance > 0 ? '+' : ''}${variance.toFixed(1)} MD</div>
+                `;
+                gridBody.appendChild(row);
+            }
         });
         
-        teamDiv.appendChild(header);
-        teamDiv.appendChild(gridHeader);
-        teamDiv.appendChild(gridBody);
-        grid.appendChild(teamDiv);
+        categoryDiv.appendChild(header);
+        categoryDiv.appendChild(gridHeader);
+        categoryDiv.appendChild(gridBody);
+        container.appendChild(categoryDiv);
     });
+    
+    grid.appendChild(container);
 }
 
 function createTeamDetailsRow(metric) {
