@@ -184,7 +184,7 @@ function renderCapacityTable() {
             <td>
                 <div class="team-name-cell">
                     <span class="expand-icon">${chevron}</span>
-                    <strong style="color: ${metric.teamColor};">${metric.teamName}</strong>
+                    <span style="color: ${metric.teamColor}; font-weight: 600;">${metric.teamName}</span>
                 </div>
             </td>
             <td>${metric.fteAvailable} MD</td>
@@ -285,7 +285,7 @@ function renderWorkBreakdown(metrics) {
         // Team name with color indicator
         const teamNameDiv = document.createElement('div');
         teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 8px; flex-shrink: 0; width: 100px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
-        teamNameDiv.innerHTML = `<strong style="color: ${metric.teamColor};">${metric.teamName}</strong>`;
+        teamNameDiv.innerHTML = `<span style="color: ${metric.teamColor}; font-weight: 600;">${metric.teamName}</span>`;
         
         // Segments for each category
         const segmentsDiv = document.createElement('div');
