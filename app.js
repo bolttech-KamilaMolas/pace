@@ -4,15 +4,19 @@
 
 // --- DATA (based on Excel structure) ---
 
-const TEAMS = [
-    { id: 'alf', name: 'ALF', color: '#3b82f6' },
-    { id: 'warex', name: 'WAREX', color: '#10b981' },
-    { id: 'optimus', name: 'OPTIMUS', color: '#f59e0b' },
-    { id: 'mash', name: 'MASH', color: '#8b5cf6' },
-    { id: 'magento', name: 'MAGENTO', color: '#ec4899' },
-    { id: 'qa', name: 'QA', color: '#14b8a6' },
-    { id: 'it_delivery', name: 'IT DELIVERY', color: '#64748b' },
-];
+// Use TEAMS from constants.js if available, otherwise define here
+let TEAMS;
+if (typeof TEAMS === 'undefined' || !Array.isArray(TEAMS)) {
+    TEAMS = [
+        { id: 'alf', name: 'ALF', color: '#3b82f6' },
+        { id: 'warex', name: 'WAREX', color: '#10b981' },
+        { id: 'optimus', name: 'OPTIMUS', color: '#f59e0b' },
+        { id: 'mash', name: 'MASH', color: '#8b5cf6' },
+        { id: 'magento', name: 'MAGENTO', color: '#ec4899' },
+        { id: 'qa', name: 'QA', color: '#14b8a6' },
+        { id: 'it_delivery', name: 'IT DELIVERY', color: '#64748b' },
+    ];
+}
 
 // Available roles for people
 const ROLES = [
@@ -7183,7 +7187,12 @@ function showPage(pageName) {
                 break;
             case 'squadlead':
                 console.log(`🟡 showPage: Renderuję SQUADLEAD`);
-                renderSprintAvailability();
+                // Initialize and render Module 09 Squad Lead
+                if (typeof init === 'function') {
+                    init(); // Call Module 09 init()
+                } else {
+                    console.error('🟡 showPage: init() not found from squadlead.js');
+                }
                 break;
             case 'settings':
                 console.log(`🟡 showPage: Renderuję SETTINGS`);

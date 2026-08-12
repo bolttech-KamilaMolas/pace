@@ -681,5 +681,5 @@ function init() {
     renderWorkBreakdown(teamMetrics);
 }
 
-// Run on page load
-document.addEventListener('DOMContentLoaded', init);
+// Note: init() is called from app.js showPage() when squadlead page is shown
+// Do NOT use DOMContentLoaded listener here as it would fire before app.js is ready

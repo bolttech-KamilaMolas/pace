@@ -2742,7 +2742,39 @@
 
             <!-- Squad Lead Page -->
             <div class="page" id="page-squadlead">
-                <div id="squadlead-content"></div>
+                <div id="squadlead-content" style="padding: 24px;">
+                    <!-- Header with title -->
+                    <h1 style="font-size: 24px; font-weight: 700; color: var(--bt-navy); margin: 0 0 24px 0;">👨‍💼 Squad Lead Dashboard</h1>
+                    
+                    <!-- Capacity Overview Table -->
+                    <div style="background: var(--bt-white); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 24px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background: var(--bt-grey-50); border-bottom: 1px solid var(--border);">
+                                <tr>
+                                    <th style="padding: 8px 12px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-secondary);">Team</th>
+                                    <th style="padding: 8px 12px; text-align: center; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-secondary);">FTE Available</th>
+                                    <th style="padding: 8px 12px; text-align: center; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-secondary);">Allocated</th>
+                                    <th style="padding: 8px 12px; text-align: center; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-secondary);">Utilization</th>
+                                    <th style="padding: 8px 12px; text-align: center; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-secondary);">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="capacity-tbody">
+                                <!-- Populated by squadlead.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Work Breakdown Section -->
+                    <div style="background: var(--bt-white); border: 1px solid var(--border); border-radius: 3px; padding: 12px;">
+                        <h3 style="font-size: 12px; font-weight: 600; color: var(--bt-navy); margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.4px;">📊 Work Breakdown - Plan vs Actual (MD)</h3>
+                        <div style="font-size: 10px; color: var(--text-secondary); margin-bottom: 12px;">
+                            Plan (jasnoniebieskie) = planowana alokacja | Actual (ciemniebieskie + czerwone overflow)
+                        </div>
+                        <div id="breakdown-grid">
+                            <!-- Populated by squadlead.js -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Settings Page -->
@@ -2822,6 +2854,9 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script src="project-constants.js"></script>
     <script src="i18n.js"></script>
+    <script src="modules/shared/constants.js"></script>
+    <script src="modules/09-squadlead/mock-data.js"></script>
+    <script src="modules/09-squadlead/squadlead.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
