@@ -48,14 +48,16 @@ const MOCK_PROJECTS = [
         id: 100,
         name: "BAU & Maintenance",
         status: "in-progress",
-        teams: ['ALF', 'WAREX', 'OPTIMUS', 'MASH', 'MAGENTO'],
+        teams: ['ALF', 'WAREX', 'OPTIMUS', 'MASH', 'MAGENTO', 'QA', 'IT_DELIVERY'],
         category: 'bau',
         allocations: {
             'alf': { 0: 2, 1: 2, 2: 2, 3: 2 },
             'warex': { 0: 2, 1: 2, 2: 2, 3: 2 },
             'optimus': { 0: 2, 1: 2, 2: 2, 3: 2 },
             'mash': { 0: 2, 1: 2, 2: 2, 3: 2 },
-            'magento': { 0: 2, 1: 2, 2: 2, 3: 2 }
+            'magento': { 0: 2, 1: 2, 2: 2, 3: 2 },
+            'qa': { 0: 2, 1: 2, 2: 2, 3: 2 },
+            'it_delivery': { 0: 2, 1: 2, 2: 2, 3: 2 }
         }
     },
     {

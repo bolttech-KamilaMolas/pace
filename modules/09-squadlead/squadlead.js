@@ -661,6 +661,7 @@ function init() {
     
     // Render
     renderCapacityTable();
+    renderWorkBreakdown(teamMetrics);
 }
 
 // Run on page load
