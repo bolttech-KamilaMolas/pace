@@ -567,9 +567,6 @@ function createTeamDetailsRow(metric) {
                 
                 <div class="details-section">
                     <h3>📊 Work Breakdown</h3>
-                    <div class="work-breakdown-legend">
-                        Left bar = Plan | Right bar = Actual
-                    </div>
                     <div class="work-breakdown-section">
                         ${workBreakdownMarkup}
                     </div>
