@@ -35,11 +35,14 @@ if (typeof ROLES === 'undefined') {
 }
 
 // Friday availability factor (skrócony piątek)
-let FRIDAY_FACTOR = 0.65;
+// Use from constants.js if available, otherwise define here
+if (typeof FRIDAY_FACTOR === 'undefined') {
+    var FRIDAY_FACTOR = 0.65;
+}
 
 // Capacity allocation parameters per team (% of total capacity)
 // OVERHEAD + SCRUM + MAINTENANCE_NET + BAU + PROJECTS = 100%
-let CAPACITY_PARAMS = {
+var CAPACITY_PARAMS = {
     alf:     { overhead: 5, scrum: 9, maintenance: 9, bau: 21, projects: 56 },
     warex:   { overhead: 5, scrum: 10, maintenance: 16, bau: 6, projects: 63 },
     optimus: { overhead: 5, scrum: 10, maintenance: 6, bau: 24, projects: 55 },

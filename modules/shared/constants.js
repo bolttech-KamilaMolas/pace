@@ -4,9 +4,8 @@
  */
 
 // ===== BASE CONFIGURATION =====
-const BASE_DATE = new Date(2026, 0, 5); // Monday, Jan 5, 2026
-const TOTAL_WEEKS = 52;
-const FRIDAY_FACTOR = 0.65; // Friday productivity factor
+// NOTE: app.js defines its own versions (different values)
+// These are kept here for reference only, app.js takes precedence
 
 // ===== TEAMS =====
 const TEAMS = [
@@ -51,9 +50,8 @@ function getPriorityClass(priority) {
 // MOVED TO: project-constants.js (more detailed definitions)
 // Reference: project-constants.js has full PROJECT_CATEGORIES definitions
 
-// ===== STATUS CHIPS =====
-const STATUS_OPTIONS = ['not_started', 'in-progress', 'blocked', 'done', 'on-hold', 'at-risk'];
-const HEALTH_OPTIONS = ['green', 'amber', 'red'];
+// ===== STATUS & HEALTH =====
+// NOTE: app.js defines these dynamically via getStatusValues() and getHealthValues()
 
 // ===== DATE UTILITIES =====
 function formatDate(d) {
@@ -120,10 +118,8 @@ const COLORS = {
 // Export if in module context
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        BASE_DATE, TOTAL_WEEKS, FRIDAY_FACTOR,
         TEAMS, ROLES, ROLE_SORT_ORDER,
         PRIORITY_LEVELS, getPriorityClass,
-        STATUS_OPTIONS, HEALTH_OPTIONS,
         formatDate, formatDateKey, getWeekStart, getWeekRange, parseSprintDates,
         PUBLIC_HOLIDAYS, COLORS
     };
