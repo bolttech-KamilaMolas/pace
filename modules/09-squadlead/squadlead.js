@@ -183,8 +183,7 @@ function renderCapacityTable() {
         row.innerHTML = `
             <td>
                 <div class="team-name-cell">
-                    <span class="expand-icon" data-team-id="${metric.teamId}">${chevron}</span>
-                    <div class="team-icon" style="background: ${metric.teamColor};"></div>
+                    <span class="expand-icon">${chevron}</span>
                     <strong style="color: ${metric.teamColor};">${metric.teamName}</strong>
                 </div>
             </td>
@@ -207,10 +206,9 @@ function renderCapacityTable() {
             </td>
         `;
         
-        row.addEventListener('click', e => {
-            if (e.target.closest('.expand-icon')) {
-                toggleTeamDetails(metric.teamId);
-            }
+        // Click anywhere on row to expand/collapse team details
+        row.addEventListener('click', () => {
+            toggleTeamDetails(metric.teamId);
         });
         
         tbody.appendChild(row);
@@ -650,7 +648,17 @@ function init() {
     
     // Use global TEAMS, DEFAULT_PROJECTS from app.js, fallback to mock data
     const teams = (typeof TEAMS !== 'undefined') ? TEAMS : [];
-    const projects = (typeof DEFAULT_PROJECTS !== 'undefined') ? DEFAULT_PROJECTS : MOCK_PROJECTS;
+    
+    // Use DEFAULT_PROJECTS if allocations exist, otherwise use MOCK_PROJECTS
+    let projects = MOCK_PROJECTS;
+    if (typeof DEFAULT_PROJECTS !== 'undefined' && DEFAULT_PROJECTS.length > 0) {
+        // Check if DEFAULT_PROJECTS has any allocations data
+        const hasAllocations = DEFAULT_PROJECTS.some(p => p.allocations && Object.keys(p.allocations).length > 0);
+        if (hasAllocations) {
+            projects = DEFAULT_PROJECTS;
+        }
+    }
+    
     const capacityParams = (typeof CAPACITY_PARAMS !== 'undefined') ? CAPACITY_PARAMS : MOCK_CAPACITY_PARAMS;
     
     // Generate metrics for current sprint
