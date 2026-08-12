@@ -19,17 +19,20 @@ if (typeof TEAMS === 'undefined') {
 }
 
 // Available roles for people
-const ROLES = [
-    'Squad Lead',
-    'BE Developer',
-    'FE Developer',
-    'System Analyst',
-    'TSM',
-    'QA',
-    'QAE',
-    'Engineering Manager',
-    'Trainee',
-];
+// Use ROLES from constants.js if available, otherwise define here
+if (typeof ROLES === 'undefined') {
+    var ROLES = [
+        'Squad Lead',
+        'BE Developer',
+        'FE Developer',
+        'System Analyst',
+        'TSM',
+        'QA',
+        'QAE',
+        'Engineering Manager',
+        'Trainee',
+    ];
+}
 
 // Friday availability factor (skrócony piątek)
 let FRIDAY_FACTOR = 0.65;
