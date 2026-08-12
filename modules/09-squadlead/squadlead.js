@@ -495,9 +495,10 @@ function createTeamDetailsRow(metric) {
                 
                 <!-- 2. Plan % Bar Column -->
                 <div class="work-breakdown-bar">
-                    <div class="work-breakdown-bar-fill ${category} plan" style="width: ${Math.min(plannedPercent, 100)}%;">
-                        ${plannedPercent}%
-                    </div>
+                    ${plannedPercent > 0 ? `
+                        <div class="work-breakdown-bar-fill ${category} plan" style="width: ${plannedPercent}%;"></div>
+                    ` : ''}
+                    <div class="work-breakdown-bar-label">${plannedPercent}%</div>
                 </div>
                 
                 <!-- 3. Plan MD Column -->

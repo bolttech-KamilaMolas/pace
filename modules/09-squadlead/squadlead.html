@@ -481,7 +481,6 @@
             font-size: 10px;
             font-weight: 600;
             color: white;
-            min-width: 50px;
         }
 
         .work-breakdown-value {
@@ -512,13 +511,13 @@
         }
         
         .work-breakdown-bar-label {
-            position: relative;
+            position: static;
             font-size: 10px;
             font-weight: 600;
             color: var(--text-primary);
             pointer-events: none;
-            text-align: center;
-            width: 100%;
+            margin-left: 8px;
+            white-space: nowrap;
         }
 
         /* Color palette for work breakdown - using Navy + Cyan variations */
