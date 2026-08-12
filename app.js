@@ -5,6 +5,9 @@
 // --- DATA (based on Excel structure) ---
 // NOTE: TEAMS, ROLES, ROLE_SORT_ORDER are loaded from constants.js (included BEFORE app.js)
 
+// Friday reduction factor (0.65 = 65% capacity on Fridays)
+var FRIDAY_FACTOR = 0.65;
+
 // Capacity allocation parameters per team (% of total capacity)
 // OVERHEAD + SCRUM + MAINTENANCE_NET + BAU + PROJECTS = 100%
 var CAPACITY_PARAMS = {
