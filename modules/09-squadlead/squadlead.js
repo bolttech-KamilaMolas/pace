@@ -231,7 +231,6 @@ function renderWorkBreakdown(metrics) {
     grid.innerHTML = '';
     
     const categoryOrder = ['projects', 'bau', 'maintenance', 'scrum', 'overhead'];
-    const categoryLabels = { projects: 'Projects', bau: 'BAU', maintenance: 'Maintenance', scrum: 'Scrum', overhead: 'Overhead' };
     const categoryEmoji = { projects: '🎯', bau: '🔧', maintenance: '🛠️', scrum: '👥', overhead: '📋' };
     
     // Calculate actuals for all teams
@@ -250,57 +249,66 @@ function renderWorkBreakdown(metrics) {
         return actual;
     };
     
-    // Per-category view (main breakdown)
+    // Container
     const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.gap = '24px';
+    container.style.cssText = `display: flex; flex-direction: column; gap: 8px; font-size: 12px;`;
     
-    categoryOrder.forEach(category => {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.style.marginBottom = '16px';
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = `display: grid; grid-template-columns: 80px 1fr; gap: 12px; padding: 8px; border-bottom: 2px solid var(--bt-navy); font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;`;
+    header.innerHTML = `<div>Team</div><div>Projects 🎯 | BAU 🔧 | Maintenance 🛠️ | Scrum 👥 | Overhead 📋</div>`;
+    
+    // Team rows
+    metrics.forEach(metric => {
+        const params = MOCK_CAPACITY_PARAMS[metric.teamId] || { overhead: 5, scrum: 10, maintenance: 15, bau: 15, projects: 55 };
+        const totalCapacity = metric.fteAvailable;
+        const actualMD_all = calculateActualAllocations(metric.teamId.toLowerCase(), currentSprintIdx);
         
-        // Category header
-        const header = document.createElement('div');
-        header.style.cssText = `display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--bt-navy); font-weight: 600; font-size: 13px;`;
-        header.innerHTML = `<span style="font-size: 16px;">${categoryEmoji[category]}</span><span>${categoryLabels[category]}</span>`;
+        const row = document.createElement('div');
+        row.style.cssText = `display: grid; grid-template-columns: 80px 1fr; gap: 12px; padding: 8px; align-items: center; border-radius: 4px; border-left: 3px solid transparent;`;
         
-        // Grid header
-        const gridHeader = document.createElement('div');
-        gridHeader.style.cssText = `display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 8px; font-size: 11px; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.3px;`;
-        gridHeader.innerHTML = `<div>Team</div><div style="text-align: center;">Plan MD</div><div style="text-align: center;">Actual MD</div><div style="text-align: right;">Variance</div>`;
+        // Team name with color
+        const teamNameDiv = document.createElement('div');
+        teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 6px; font-weight: 600;`;
+        teamNameDiv.innerHTML = `<span style="width: 12px; height: 12px; border-radius: 2px; background: ${metric.teamColor}; flex-shrink: 0;"></span><span style="color: ${metric.teamColor}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${metric.teamName}</span>`;
         
-        // Grid items (teams for this category)
-        const gridBody = document.createElement('div');
-        metrics.forEach(metric => {
-            const params = MOCK_CAPACITY_PARAMS[metric.teamId] || { overhead: 5, scrum: 10, maintenance: 15, bau: 15, projects: 55 };
-            const totalCapacity = metric.fteAvailable;
-            const actualMD_all = calculateActualAllocations(metric.teamId.toLowerCase(), currentSprintIdx);
-            
-            const plannedMD = Math.round((params[category] / 100) * totalCapacity * 10) / 10;
-            const actualMD_val = actualMD_all[category] || 0;
+        // Segments for each category
+        const segmentsDiv = document.createElement('div');
+        segmentsDiv.style.cssText = `display: flex; gap: 8px; flex-wrap: wrap; align-items: center;`;
+        
+        let hasWarning = false;
+        categoryOrder.forEach(cat => {
+            const plannedMD = Math.round((params[cat] / 100) * totalCapacity * 10) / 10;
+            const actualMD_val = actualMD_all[cat] || 0;
             const variance = actualMD_val - plannedMD;
-            const hasWarning = variance > 0.5; // warning if > 0.5 MD over
             
-            if (plannedMD > 0 || actualMD_val > 0) { // Only show if there's data
-                const row = document.createElement('div');
-                row.style.cssText = `display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 8px; align-items: center; border-radius: 4px; ${hasWarning ? 'background: var(--bt-cyan-pale); border-left: 3px solid var(--bt-cyan);' : 'border-left: 3px solid transparent;'}`;
-                row.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 16px; height: 16px; border-radius: 3px; background: ${metric.teamColor};"></span><strong style="color: ${metric.teamColor};">${metric.teamName}</strong></div>
-                    <div style="text-align: center; font-size: 12px; color: var(--text-secondary);">${plannedMD.toFixed(1)}</div>
-                    <div style="text-align: center; font-size: 12px; font-weight: 600; color: var(--text-primary);">${actualMD_val.toFixed(1)}</div>
-                    <div style="text-align: right; font-size: 11px; font-weight: 600; color: ${hasWarning ? 'var(--error)' : variance < -0.5 ? 'var(--success)' : 'var(--text-secondary)'};">${variance > 0 ? '+' : ''}${variance.toFixed(1)} MD</div>
+            if (plannedMD > 0 || actualMD_val > 0) {
+                if (variance > 0.5) hasWarning = true;
+                
+                const segment = document.createElement('div');
+                segment.style.cssText = `display: flex; align-items: center; gap: 3px; padding: 3px 6px; border-radius: 3px; background: ${variance > 0.5 ? 'var(--error)' : variance < -0.5 ? 'var(--success)' : 'var(--border)'}; color: white; font-size: 11px; font-weight: 600; white-space: nowrap;`;
+                
+                const barColor = variance > 0.5 ? '#fff' : variance < -0.5 ? '#fff' : 'var(--text-secondary)';
+                segment.innerHTML = `
+                    <span style="font-size: 12px;">${categoryEmoji[cat]}</span>
+                    <span style="color: ${barColor};">${plannedMD.toFixed(0)}/${actualMD_val.toFixed(0)}</span>
                 `;
-                gridBody.appendChild(row);
+                segmentsDiv.appendChild(segment);
             }
         });
         
-        categoryDiv.appendChild(header);
-        categoryDiv.appendChild(gridHeader);
-        categoryDiv.appendChild(gridBody);
-        container.appendChild(categoryDiv);
+        // Add warning highlight if needed
+        if (hasWarning) {
+            row.style.background = 'var(--bt-cyan-pale)';
+            row.style.borderLeftColor = 'var(--bt-cyan)';
+        }
+        
+        row.appendChild(teamNameDiv);
+        row.appendChild(segmentsDiv);
+        container.appendChild(row);
     });
     
+    grid.appendChild(header);
     grid.appendChild(container);
 }
 
