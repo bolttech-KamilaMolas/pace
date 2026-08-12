@@ -81,14 +81,16 @@
 
         .header .sprint-info {
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0;
         }
 
         /* CAPACITY OVERVIEW TABLE */
         .capacity-overview {
             background: white;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 3px;
             overflow: hidden;
             margin-bottom: 24px;
         }
@@ -99,22 +101,24 @@
         }
 
         .capacity-table thead {
-            background: var(--bt-navy);
-            color: white;
+            background: transparent;
+            border-bottom: 1px solid var(--border);
         }
 
         .capacity-table th {
-            padding: 12px 16px;
+            padding: 8px 12px;
             text-align: left;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
+            color: var(--text-secondary);
         }
 
         .capacity-table td {
-            padding: 14px 16px;
+            padding: 10px 12px;
             border-bottom: 1px solid var(--border);
+            font-size: 13px;
         }
 
         .capacity-table tbody tr {
@@ -123,7 +127,7 @@
         }
 
         .capacity-table tbody tr:hover {
-            background: var(--bt-navy-vlight);
+            background: rgba(0, 186, 199, 0.05);
         }
 
         .capacity-table tbody tr.expanded {
@@ -135,6 +139,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 13px;
         }
 
         .expand-icon {
@@ -150,14 +155,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .bar {
             flex: 1;
-            height: 24px;
-            background: #e2e5ef;
-            border-radius: 4px;
+            height: 20px;
+            background: #F0F0F0;
+            border-radius: 3px;
             overflow: hidden;
             position: relative;
         }
@@ -168,7 +173,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: white;
         }
@@ -181,10 +186,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .status-badge.ok { background: rgba(3, 152, 85, 0.1); }
@@ -339,23 +344,23 @@
         .work-breakdown-section {
             background: white;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 3px;
+            padding: 12px;
         }
 
         .work-breakdown-section h3 {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--bt-navy);
-            margin: 0 0 8px 0;
+            margin: 0 0 12px 0;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
         }
 
         .work-breakdown-legend {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         
         .work-breakdown-header {

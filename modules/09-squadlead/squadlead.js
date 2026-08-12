@@ -251,12 +251,26 @@ function renderWorkBreakdown(metrics) {
     
     // Container
     const container = document.createElement('div');
-    container.style.cssText = `display: flex; flex-direction: column; gap: 8px; font-size: 12px;`;
+    container.style.cssText = `display: flex; flex-direction: column; gap: 12px; font-size: 12px;`;
     
     // Header
     const header = document.createElement('div');
-    header.style.cssText = `display: grid; grid-template-columns: 80px 1fr; gap: 12px; padding: 8px; border-bottom: 2px solid var(--bt-navy); font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;`;
-    header.innerHTML = `<div>Team</div><div>Projects 🎯 | BAU 🔧 | Maintenance 🛠️ | Scrum 👥 | Overhead 📋</div>`;
+    header.style.cssText = `display: flex; gap: 16px; padding: 8px 12px; border-bottom: 1px solid #CCF1F4; font-weight: 600; font-size: 10px; color: #746F95; text-transform: uppercase; letter-spacing: 0.4px;`;
+    const headerLabel = document.createElement('div');
+    headerLabel.style.cssText = `flex-shrink: 0; width: 100px;`;
+    headerLabel.textContent = 'Team';
+    header.appendChild(headerLabel);
+    
+    const headerBreakdown = document.createElement('div');
+    headerBreakdown.style.cssText = `display: flex; gap: 16px; flex: 1;`;
+    const categories = ['Projects', 'BAU', 'Maintenance', 'Scrum', 'Overhead'];
+    categories.forEach(cat => {
+        const catHeader = document.createElement('div');
+        catHeader.style.cssText = `flex: 1; text-align: center; font-size: 10px;`;
+        catHeader.textContent = cat;
+        headerBreakdown.appendChild(catHeader);
+    });
+    header.appendChild(headerBreakdown);
     
     // Team rows
     metrics.forEach(metric => {
@@ -265,16 +279,17 @@ function renderWorkBreakdown(metrics) {
         const actualMD_all = calculateActualAllocations(metric.teamId.toLowerCase(), currentSprintIdx);
         
         const row = document.createElement('div');
-        row.style.cssText = `display: grid; grid-template-columns: 80px 1fr; gap: 12px; padding: 8px; align-items: center; border-radius: 4px; border-left: 3px solid transparent;`;
+        row.style.cssText = `display: flex; gap: 16px; padding: 8px 12px; align-items: center; border-radius: 3px; border-left: 3px solid transparent; transition: background 0.2s;`;
+        row.style.cursor = 'pointer';
         
-        // Team name with color
+        // Team name with color indicator
         const teamNameDiv = document.createElement('div');
-        teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 6px; font-weight: 600;`;
-        teamNameDiv.innerHTML = `<span style="width: 12px; height: 12px; border-radius: 2px; background: ${metric.teamColor}; flex-shrink: 0;"></span><span style="color: ${metric.teamColor}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${metric.teamName}</span>`;
+        teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 8px; font-weight: 600; flex-shrink: 0; width: 100px; font-size: 13px;`;
+        teamNameDiv.innerHTML = `<span style="width: 10px; height: 10px; border-radius: 2px; background: ${metric.teamColor}; flex-shrink: 0;"></span><span style="color: ${metric.teamColor};">${metric.teamName}</span>`;
         
         // Segments for each category
         const segmentsDiv = document.createElement('div');
-        segmentsDiv.style.cssText = `display: flex; gap: 8px; flex-wrap: wrap; align-items: center;`;
+        segmentsDiv.style.cssText = `display: flex; gap: 16px; flex: 1; align-items: center; padding: 2px 0;`;
         
         let hasWarning = false;
         categoryOrder.forEach(cat => {
@@ -286,13 +301,27 @@ function renderWorkBreakdown(metrics) {
                 if (variance > 0.5) hasWarning = true;
                 
                 const segment = document.createElement('div');
-                segment.style.cssText = `display: flex; align-items: center; gap: 3px; padding: 3px 6px; border-radius: 3px; background: ${variance > 0.5 ? 'var(--error)' : variance < -0.5 ? 'var(--success)' : 'var(--border)'}; color: white; font-size: 11px; font-weight: 600; white-space: nowrap;`;
+                const bgColor = variance > 0.5 ? 'rgba(217, 45, 32, 0.1)' : variance < -0.5 ? 'rgba(3, 152, 85, 0.1)' : 'transparent';
+                const textColor = variance > 0.5 ? '#D92D20' : variance < -0.5 ? '#039855' : '#4B5563';
+                const borderColor = variance > 0.5 ? '#D92D20' : variance < -0.5 ? '#039855' : 'transparent';
                 
-                const barColor = variance > 0.5 ? '#fff' : variance < -0.5 ? '#fff' : 'var(--text-secondary)';
-                segment.innerHTML = `
-                    <span style="font-size: 12px;">${categoryEmoji[cat]}</span>
-                    <span style="color: ${barColor};">${plannedMD.toFixed(0)}/${actualMD_val.toFixed(0)}</span>
+                segment.style.cssText = `
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    gap: 4px; 
+                    padding: 4px 8px; 
+                    border-radius: 3px; 
+                    background: ${bgColor}; 
+                    border: 1px solid ${borderColor};
+                    color: ${textColor}; 
+                    font-size: 11px; 
+                    font-weight: 600; 
+                    flex: 1;
+                    min-height: auto;
                 `;
+                
+                segment.innerHTML = `<span>${plannedMD.toFixed(0)}/${actualMD_val.toFixed(0)} MD</span>`;
                 segmentsDiv.appendChild(segment);
             }
         });
@@ -302,6 +331,16 @@ function renderWorkBreakdown(metrics) {
             row.style.background = 'var(--bt-cyan-pale)';
             row.style.borderLeftColor = 'var(--bt-cyan)';
         }
+        
+        // Hover effect
+        row.addEventListener('mouseenter', () => {
+            row.style.background = hasWarning ? 'var(--bt-cyan-pale)' : '#F9FAFB';
+            row.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.08)';
+        });
+        row.addEventListener('mouseleave', () => {
+            row.style.background = hasWarning ? 'var(--bt-cyan-pale)' : 'transparent';
+            row.style.boxShadow = 'none';
+        });
         
         row.appendChild(teamNameDiv);
         row.appendChild(segmentsDiv);
