@@ -73,7 +73,7 @@ function getCurrentUser() {
 }
 
 // Default alert configurations (editable)
-const DEFAULT_ALERT_CONFIG = {
+var DEFAULT_ALERT_CONFIG = {
     overCapacity: {
         label: 'Przekroczenie capacity',
         type: 'Capacity',
@@ -148,7 +148,7 @@ function saveAlertConfig(config) {
 }
 
 // Default projects data — using original priority numbering
-const DEFAULT_PROJECTS = [
+var DEFAULT_PROJECTS = [
     { id: 1, priority: 'N/A', status: 'in-progress', health: 'green', name: 'Generic Warranty Product in Warex2', businessOwner: 'Agnieszka Pura', lead: 'Marcin Wrzesiński', delivery: '', teams: ['WAREX'], risks: '', notes: [], allocations: {}, category: 'project' },
     { id: 2, priority: 'N/A', status: 'in-progress', health: 'green', name: 'API between Warex i IRIS', businessOwner: 'Marta Jankowska', lead: 'Marcin Wrzesiński', delivery: '', teams: ['WAREX'], risks: '', notes: [], allocations: {}, category: 'project' },
     { id: 3, priority: 1, status: 'in-progress', health: 'green', name: 'BoltCompare', businessOwner: '', lead: 'Tomasz Lupa', delivery: '2026-08-09', teams: ['OPTIMUS'], risks: '', notes: [], allocations: {}, category: 'project' },
@@ -189,20 +189,23 @@ let PROJECTS = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
 let ARCHIVED_PROJECTS = [];
 
 // Sort order for roles within teams (lower = shown first)
-let ROLE_SORT_ORDER = {
-    'Engineering Manager': 0,
-    'Squad Lead': 1,
-    'BE Developer': 2,
-    'FE Developer': 3,
-    'TSM': 4,
-    'System Analyst': 5,
-    'QA': 6,
-    'QAE': 7,
-    'QA coordinator': 8,
-    'Trainee': 9,
-};
+// Use from constants.js if available, otherwise define here
+if (typeof ROLE_SORT_ORDER === 'undefined') {
+    var ROLE_SORT_ORDER = {
+        'Engineering Manager': 0,
+        'Squad Lead': 1,
+        'BE Developer': 2,
+        'FE Developer': 3,
+        'TSM': 4,
+        'System Analyst': 5,
+        'QA': 6,
+        'QAE': 7,
+        'QA coordinator': 8,
+        'Trainee': 9,
+    };
+}
 
-const DEFAULT_PEOPLE = [
+var DEFAULT_PEOPLE = [
     // --- ALF ---
     { name: 'Kamila Molas', role: 'Squad Lead', team: 'ALF', projects: ['KAP', 'Dynamic Pricing', 'Decision Cube'], employmentType: 'full-time', availability: 100, assignedTeams: [] },
     { name: 'Mikołaj Banaszkiewicz', role: 'BE Developer', team: 'ALF', projects: ['KAP', 'Dynamic Pricing fixes'], employmentType: 'full-time', availability: 100 , assignedTeams: []},
@@ -310,7 +313,7 @@ function removePerson(personName) {
     }
 }
 
-const SPRINTS = [
+var SPRINTS = [
     { id: 277, name: 'Sprint 277', dates: '01.12 - 12.12' },
     { id: 276, name: 'Sprint 276', dates: '17.11 - 28.11' },
     { id: 275, name: 'Sprint 275', dates: '03.11 - 14.11' },
@@ -419,7 +422,7 @@ function loadCustomSprints() {
     }
 }
 
-const WEEKS = [
+var WEEKS = [
     '28.07-03.08', '04.08-10.08', '11.08-17.08', '18.08-24.08',
     '25.08-31.08', '01.09-07.09', '08.09-14.09', '15.09-21.09',
     '22.09-28.09', '29.09-05.10', '06.10-12.10', '13.10-19.10',
@@ -428,7 +431,7 @@ const WEEKS = [
 ];
 
 // Dynamically generate week metadata from base date (Mon 28.07.2026)
-const BASE_DATE = new Date(2026, 6, 27);
+var BASE_DATE = new Date(2026, 6, 27);
 let TOTAL_WEEKS = WEEKS.length;
 
 function generateWeeks() {
@@ -515,7 +518,7 @@ function ensureSprintsCoverWeeks() {
 }
 
 // --- WORKLOAD VIEW STATE ---
-const WEEKS_PER_PAGE = 18; // visible weeks at once (through end of November)
+var WEEKS_PER_PAGE = 18; // visible weeks at once (through end of November)
 let workloadOffset = 0;   // index of first visible week (steps of WEEKS_PER_PAGE)
 
 // --- RENDER FUNCTIONS ---
@@ -1242,9 +1245,9 @@ function renderProjectRow(p) {
     `;
 }
 
-const STATUS_OPTIONS = getStatusValues(true); // Include all statuses including Archived
-const HEALTH_OPTIONS = getHealthValues();
-const ALL_TEAMS_LIST = ['ALF', 'WAREX', 'OPTIMUS', 'MASH', 'MAGENTO', 'QA', 'IT DELIVERY'];
+var STATUS_OPTIONS = getStatusValues(true); // Include all statuses including Archived
+var HEALTH_OPTIONS = getHealthValues();
+var ALL_TEAMS_LIST = ['ALF', 'WAREX', 'OPTIMUS', 'MASH', 'MAGENTO', 'QA', 'IT DELIVERY'];
 
 function startInlineEdit(projectId) {
     const project = PROJECTS.find(p => p.id === projectId);
@@ -3201,7 +3204,7 @@ function initNavigation() {
 // EMPLOYMENT TYPES (for partial availability)
 // ============================================================
 
-const EMPLOYMENT_TYPES = {
+var EMPLOYMENT_TYPES = {
     'full-time': { value: 'full-time', label_pl: 'Pełna zatrudnienie', label_en: 'Full-time', availability: 100 },
     'half-time': { value: 'half-time', label_pl: 'Pół etatu', label_en: 'Half-time', availability: 50 },
     'part-time': { value: 'part-time', label_pl: 'Część etatu', label_en: 'Part-time', availability: 25 },
@@ -3213,7 +3216,7 @@ const EMPLOYMENT_TYPES = {
 // ============================================================
 
 // Default Polish public holidays by year
-const DEFAULT_PUBLIC_HOLIDAYS = {
+var DEFAULT_PUBLIC_HOLIDAYS = {
     '2026': [
         { date: '2026-01-01', name_pl: 'Nowy Rok', name_en: 'New Year' },
         { date: '2026-01-06', name_pl: 'Trzech Króli', name_en: 'Epiphany' },
@@ -5665,7 +5668,7 @@ function loadSettings() {
 // EXCEL IMPORT — Fetch capacity.xlsx and parse availability
 // ============================================================
 
-const EXCEL_URL = 'https://bolttech-kamilamolas.github.io/alfinator/data/capacity.xlsx';
+var EXCEL_URL = 'https://bolttech-kamilamolas.github.io/alfinator/data/capacity.xlsx';
 
 // Parsed Excel data stored here
 let excelAvailability = {}; // { 'PersonName': { '2026-07-28': 1.0, '2026-08-04': 0.65, ... } }
@@ -7580,4 +7583,5 @@ document.addEventListener('click', (e) => {
         openEditPersonModal(personName);
     }
 });
+
 
