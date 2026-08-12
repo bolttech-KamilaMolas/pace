@@ -307,11 +307,10 @@ function renderWorkBreakdown(metrics) {
                 
                 segment.style.cssText = `
                     display: flex; 
-                    flex-direction: column;
                     align-items: center; 
                     justify-content: center;
                     gap: 4px; 
-                    padding: 6px 8px; 
+                    padding: 4px 8px; 
                     border-radius: 3px; 
                     background: ${bgColor}; 
                     border: 1px solid ${borderColor};
@@ -323,20 +322,7 @@ function renderWorkBreakdown(metrics) {
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                 `;
                 
-                // Calculate bar widths based on planned capacity
-                const maxMD = Math.max(plannedMD, actualMD_val) || 10;
-                const planPercent = (plannedMD / maxMD) * 100;
-                const actualPercent = (actualMD_val / maxMD) * 100;
-                const planBarColor = '#CCF1F4'; // Light cyan
-                const actualBarColor = variance > 0.5 ? '#D92D20' : '#00BAC7'; // Red if over, cyan if ok
-                
-                segment.innerHTML = `
-                    <div style="width: 100%; height: 12px; background: #f0f0f0; border-radius: 2px; position: relative; overflow: hidden;">
-                        <div style="position: absolute; height: 100%; background: ${planBarColor}; width: ${planPercent}%; opacity: 0.6;"></div>
-                        <div style="position: absolute; height: 100%; background: ${actualBarColor}; width: ${actualPercent}%; opacity: 0.9;"></div>
-                    </div>
-                    <span style="font-size: 12px;">${plannedMD.toFixed(0)}/${actualMD_val.toFixed(0)} MD</span>
-                `;
+                segment.innerHTML = `<span>${plannedMD.toFixed(0)}/${actualMD_val.toFixed(0)} MD</span>`;
                 segmentsDiv.appendChild(segment);
             }
         });
