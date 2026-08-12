@@ -251,11 +251,11 @@ function renderWorkBreakdown(metrics) {
     
     // Container
     const container = document.createElement('div');
-    container.style.cssText = `display: flex; flex-direction: column; gap: 12px; font-size: 12px;`;
+    container.style.cssText = `display: flex; flex-direction: column; gap: 12px; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
     
     // Header
     const header = document.createElement('div');
-    header.style.cssText = `display: flex; gap: 16px; padding: 8px 12px; border-bottom: 1px solid #CCF1F4; font-weight: 600; font-size: 10px; color: #746F95; text-transform: uppercase; letter-spacing: 0.4px;`;
+    header.style.cssText = `display: flex; gap: 16px; padding: 8px 12px; border-bottom: 1px solid #CCF1F4; font-weight: 600; font-size: 10px; color: #746F95; text-transform: uppercase; letter-spacing: 0.4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
     const headerLabel = document.createElement('div');
     headerLabel.style.cssText = `flex-shrink: 0; width: 100px;`;
     headerLabel.textContent = 'Team';
@@ -284,7 +284,7 @@ function renderWorkBreakdown(metrics) {
         
         // Team name with color indicator
         const teamNameDiv = document.createElement('div');
-        teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 8px; font-weight: 600; flex-shrink: 0; width: 100px; font-size: 13px;`;
+        teamNameDiv.style.cssText = `display: flex; align-items: center; gap: 8px; font-weight: 600; flex-shrink: 0; width: 100px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;`;
         teamNameDiv.innerHTML = `<span style="width: 10px; height: 10px; border-radius: 2px; background: ${metric.teamColor}; flex-shrink: 0;"></span><span style="color: ${metric.teamColor}; font-weight: 600;">${metric.teamName}</span>`;
         
         // Segments for each category
@@ -319,6 +319,7 @@ function renderWorkBreakdown(metrics) {
                     font-weight: 600; 
                     flex: 1;
                     min-height: auto;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                 `;
                 
                 segment.innerHTML = `<span>${plannedMD.toFixed(0)}/${actualMD_val.toFixed(0)} MD</span>`;
