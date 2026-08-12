@@ -96,8 +96,11 @@ function switchSprint(sprintIdx) {
 // ===== REGENERATE METRICS FOR CURRENT SPRINT =====
 function regenerateMetrics() {
     // The sprint index needs to map to weeks in allocations
-    // For now, use currentSprintIdx as week offset
-    teamMetrics = generateTeamMetrics(MOCK_PROJECTS, TEAMS, MOCK_CAPACITY_PARAMS, currentSprintIdx);
+    const teams = (typeof TEAMS !== 'undefined') ? TEAMS : [];
+    const projects = (typeof DEFAULT_PROJECTS !== 'undefined') ? DEFAULT_PROJECTS : MOCK_PROJECTS;
+    const capacityParams = (typeof CAPACITY_PARAMS !== 'undefined') ? CAPACITY_PARAMS : MOCK_CAPACITY_PARAMS;
+    
+    teamMetrics = generateTeamMetrics(projects, teams, capacityParams, currentSprintIdx);
     
     console.log(`Switched to sprint ${currentSprintIdx}, regenerated ${teamMetrics.length} team metrics`);
     
@@ -645,10 +648,15 @@ function init() {
     // Set initial sprint info
     updateSprintInfo();
     
-    // Generate metrics for current sprint
-    teamMetrics = generateTeamMetrics(MOCK_PROJECTS, TEAMS, MOCK_CAPACITY_PARAMS, currentSprintIdx);
+    // Use global TEAMS, DEFAULT_PROJECTS from app.js, fallback to mock data
+    const teams = (typeof TEAMS !== 'undefined') ? TEAMS : [];
+    const projects = (typeof DEFAULT_PROJECTS !== 'undefined') ? DEFAULT_PROJECTS : MOCK_PROJECTS;
+    const capacityParams = (typeof CAPACITY_PARAMS !== 'undefined') ? CAPACITY_PARAMS : MOCK_CAPACITY_PARAMS;
     
-    console.log(`Generated metrics for ${teamMetrics.length} teams:`);
+    // Generate metrics for current sprint
+    teamMetrics = generateTeamMetrics(projects, teams, capacityParams, currentSprintIdx);
+    
+    console.log(`Generated metrics for ${teamMetrics.length} teams:`, teams);
     console.log(teamMetrics);
     
     // Render
