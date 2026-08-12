@@ -3,42 +3,7 @@
 // ============================================================
 
 // --- DATA (based on Excel structure) ---
-
-// Use TEAMS from constants.js if available, otherwise define here
-// NOTE: constants.js loads BEFORE app.js, so TEAMS should already exist
-if (typeof TEAMS === 'undefined') {
-    var TEAMS = [
-        { id: 'alf', name: 'ALF', color: '#3b82f6' },
-        { id: 'warex', name: 'WAREX', color: '#10b981' },
-        { id: 'optimus', name: 'OPTIMUS', color: '#f59e0b' },
-        { id: 'mash', name: 'MASH', color: '#8b5cf6' },
-        { id: 'magento', name: 'MAGENTO', color: '#ec4899' },
-        { id: 'qa', name: 'QA', color: '#14b8a6' },
-        { id: 'it_delivery', name: 'IT DELIVERY', color: '#64748b' },
-    ];
-}
-
-// Available roles for people
-// Use ROLES from constants.js if available, otherwise define here
-if (typeof ROLES === 'undefined') {
-    var ROLES = [
-        'Squad Lead',
-        'BE Developer',
-        'FE Developer',
-        'System Analyst',
-        'TSM',
-        'QA',
-        'QAE',
-        'Engineering Manager',
-        'Trainee',
-    ];
-}
-
-// Friday availability factor (skrócony piątek)
-// Use from constants.js if available, otherwise define here
-if (typeof FRIDAY_FACTOR === 'undefined') {
-    var FRIDAY_FACTOR = 0.65;
-}
+// NOTE: TEAMS, ROLES, ROLE_SORT_ORDER are loaded from constants.js (included BEFORE app.js)
 
 // Capacity allocation parameters per team (% of total capacity)
 // OVERHEAD + SCRUM + MAINTENANCE_NET + BAU + PROJECTS = 100%
@@ -190,18 +155,7 @@ let ARCHIVED_PROJECTS = [];
 
 // Sort order for roles within teams (lower = shown first)
 // Use from constants.js if available, otherwise define here
-if (typeof ROLE_SORT_ORDER === 'undefined') {
-    var ROLE_SORT_ORDER = {
-        'Engineering Manager': 0,
-        'Squad Lead': 1,
-        'BE Developer': 2,
-        'FE Developer': 3,
-        'TSM': 4,
-        'System Analyst': 5,
-        'QA': 6,
-        'QAE': 7,
-        'QA coordinator': 8,
-        'Trainee': 9,
+
     };
 }
 
@@ -7583,5 +7537,6 @@ document.addEventListener('click', (e) => {
         openEditPersonModal(personName);
     }
 });
+
 
 
