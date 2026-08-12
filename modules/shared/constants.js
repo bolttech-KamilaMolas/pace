@@ -10,13 +10,13 @@ const FRIDAY_FACTOR = 0.65; // Friday productivity factor
 
 // ===== TEAMS =====
 const TEAMS = [
-    { id: 'alf', name: 'ALF', color: '#00BAC7', base_capacity: 32 },
-    { id: 'qa', name: 'QA', color: '#8b5cf6', base_capacity: 16 },
-    { id: 'backend', name: 'Backend', color: '#10b981', base_capacity: 24 },
-    { id: 'frontend', name: 'Frontend', color: '#f59e0b', base_capacity: 24 },
-    { id: 'devops', name: 'DevOps', color: '#ef4444', base_capacity: 8 },
-    { id: 'arch', name: 'Architecture', color: '#06b6d4', base_capacity: 8 },
-    { id: 'pm', name: 'PM/Scrum', color: '#a855f7', base_capacity: 8 }
+    { id: 'alf', name: 'ALF', color: '#3b82f6', base_capacity: 40 },
+    { id: 'warex', name: 'WAREX', color: '#10b981', base_capacity: 40 },
+    { id: 'optimus', name: 'OPTIMUS', color: '#f59e0b', base_capacity: 40 },
+    { id: 'mash', name: 'MASH', color: '#8b5cf6', base_capacity: 40 },
+    { id: 'magento', name: 'MAGENTO', color: '#ec4899', base_capacity: 40 },
+    { id: 'qa', name: 'QA', color: '#14b8a6', base_capacity: 40 },
+    { id: 'it_delivery', name: 'IT DELIVERY', color: '#64748b', base_capacity: 40 }
 ];
 
 // ===== ROLES =====
