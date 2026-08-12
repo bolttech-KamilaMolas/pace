@@ -367,7 +367,7 @@
         
         .work-breakdown-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 12px;
             font-size: 11px;
@@ -397,7 +397,7 @@
 
         .work-breakdown-item {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 8px;
             font-size: 12px;
@@ -488,8 +488,7 @@
             font-size: 11px;
             color: var(--text-secondary);
             white-space: nowrap;
-            width: 70px;
-            text-align: right;
+            text-align: center;
             flex-shrink: 0;
         }
 
@@ -513,14 +512,13 @@
         }
         
         .work-breakdown-bar-label {
-            position: absolute;
-            right: 4px;
-            top: 50%;
-            transform: translateY(-50%);
+            position: relative;
             font-size: 10px;
             font-weight: 600;
             color: var(--text-primary);
             pointer-events: none;
+            text-align: center;
+            width: 100%;
         }
 
         /* Color palette for work breakdown - using Navy + Cyan variations */

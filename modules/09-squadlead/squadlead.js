@@ -507,17 +507,21 @@ function createTeamDetailsRow(metric) {
                 
                 <!-- 4. Actual % Bar Column -->
                 <div class="work-breakdown-bar">
-                    ${delta >= 0 ? `
-                        <!-- Gdy actual >= plan: plan (cyan) + overflow (red) -->
-                        <div class="work-breakdown-bar-fill ${category} plan" style="width: ${Math.min(plannedPercent, 100)}%;"></div>
-                        ${delta > 0 ? `
-                            <div class="work-breakdown-bar-fill ${category} actual-overflow" style="width: ${Math.min(delta, 100 - plannedPercent)}%;" title="Over by ${delta}%"></div>
-                        ` : ''}
+                    ${actualPercent > 0 ? `
+                        ${delta >= 0 ? `
+                            <!-- Gdy actual >= plan: plan (cyan) + overflow (red) -->
+                            <div class="work-breakdown-bar-fill ${category} plan" style="width: ${Math.min(plannedPercent, 100)}%;"></div>
+                            ${delta > 0 ? `
+                                <div class="work-breakdown-bar-fill ${category} actual-overflow" style="width: ${Math.min(delta, 100 - plannedPercent)}%;" title="Over by ${delta}%"></div>
+                            ` : ''}
+                        ` : `
+                            <!-- Gdy actual < plan: tylko actual (cyan) -->
+                            <div class="work-breakdown-bar-fill ${category} plan" style="width: ${Math.min(actualPercent, 100)}%; opacity: 0.7;"></div>
+                        `}
+                        <div class="work-breakdown-bar-label">${actualPercent}%</div>
                     ` : `
-                        <!-- Gdy actual < plan: tylko actual (cyan) -->
-                        <div class="work-breakdown-bar-fill ${category} plan" style="width: ${Math.min(actualPercent, 100)}%; opacity: 0.7;"></div>
+                        <div class="work-breakdown-bar-label">0%</div>
                     `}
-                    <div class="work-breakdown-bar-label">${actualPercent}%</div>
                 </div>
                 
                 <!-- 5. Actual MD Column -->
