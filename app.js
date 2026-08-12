@@ -5,9 +5,9 @@
 // --- DATA (based on Excel structure) ---
 
 // Use TEAMS from constants.js if available, otherwise define here
-let TEAMS;
-if (typeof TEAMS === 'undefined' || !Array.isArray(TEAMS)) {
-    TEAMS = [
+// NOTE: constants.js loads BEFORE app.js, so TEAMS should already exist
+if (typeof TEAMS === 'undefined') {
+    var TEAMS = [
         { id: 'alf', name: 'ALF', color: '#3b82f6' },
         { id: 'warex', name: 'WAREX', color: '#10b981' },
         { id: 'optimus', name: 'OPTIMUS', color: '#f59e0b' },
